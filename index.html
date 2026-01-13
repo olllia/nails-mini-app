@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Запись на ноготочки</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    button { padding: 10px; margin: 5px 0; width: 100%; }
+    .admin { background: #ffe4e1; padding: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>💅 Запись</h2>
+<div id="content"></div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+const user = tg.initDataUnsafe.user;
+const ADMIN_ID = 123456789; // тот же id
+
+const content = document.getElementById("content");
+
+// --- АДМИН ---
+if (user.id === ADMIN_ID) {
+  content.innerHTML = `
+    <div class="admin">
+      <h3>👩‍🎨 Админка</h3>
+      <input type="date" id="date">
+      <input type="time" id="time">
+      <button onclick="addSlot()">➕ Добавить окошко</button>
+      <button onclick="loadAppointments()">📋 Записи</button>
+      <div id="list"></div>
+    </div>
+  `;
+}
+
+// --- КЛИЕНТ ---
+loadSlots();
+
+function loadSlots() {
+  fetch("http://localhost:3000/slots")
+    .then(r => r.json())
+    .then(slots => {
+      slots.forEach(s => {
+        const btn = document.createElement("button");
+        btn.innerText = `${s.date} ${s.time} — записаться`;
+        btn.onclick = () => book(s.id);
+        content.appendChild(btn);
+      });
+    });
+}
+
+function book(slotId) {
+  fetch("http://localhost:3000/book", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId,
+      userId: user.id,
+      userName: user.first_name
+    })
+  }).then(() => {
+    alert("Вы записались 💅");
+    tg.close();
+  });
+}
+
+function addSlot() {
+  fetch("http://localhost:3000/slots", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      date: date.value,
+      time: time.value,
+      userId: user.id
+    })
+  }).then(() => alert("Добавлено"));
+}
+
+function loadAppointments() {
+  fetch(`http://localhost:3000/appointments/${user.id}`)
+    .then(r => r.json())
+    .then(list => {
+      document.getElementById("list").innerHTML =
+        list.map(a => `${a.date} ${a.time} — ${a.user_name}`).join("<br>");
+    });
+}
+</script>
+
+</body>
+</html>
