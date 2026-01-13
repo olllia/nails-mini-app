@@ -42,7 +42,7 @@ if (user.id === ADMIN_ID) {
 loadSlots();
 
 function loadSlots() {
-  fetch("http://localhost:3000/slots")
+  fetch("https://nails-backend-5knq.onrender.com/slots")
     .then(r => r.json())
     .then(slots => {
       slots.forEach(s => {
@@ -55,7 +55,7 @@ function loadSlots() {
 }
 
 function book(slotId) {
-  fetch("http://localhost:3000/book", {
+  fetch("https://nails-backend-5knq.onrender.com/book", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -70,7 +70,7 @@ function book(slotId) {
 }
 
 function addSlot() {
-  fetch("http://localhost:3000/slots", {
+  fetch("https://nails-backend-5knq.onrender.com/slots", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -82,7 +82,7 @@ function addSlot() {
 }
 
 function loadAppointments() {
-  fetch(`http://localhost:3000/appointments/${user.id}`)
+  fetch(`https://nails-backend-5knq.onrender.com/appointments/${user.id}`)
     .then(r => r.json())
     .then(list => {
       document.getElementById("list").innerHTML =
