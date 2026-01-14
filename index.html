@@ -1,61 +1,190 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <title>Запись на ноготочки</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    button { padding: 10px; margin: 5px 0; width: 100%; }
-    .admin { background: #ffe4e1; padding: 10px; }
+    :root {
+      --pink: #f6c1cc;
+      --pink-dark: #e89aaa;
+      --bg: #fafafa;
+      --card: #ffffff;
+      --text: #333;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    h3 { margin-top: 0; }
+
+    .section { margin-bottom: 20px; }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+    }
+
+    .slot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .slot-time { font-weight: 500; }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--pink);
+    }
+
+    .btn-primary:hover {
+      background: var(--pink-dark);
+    }
+
+    .btn-secondary {
+      background: #eee;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .admin {
+      border: 2px dashed var(--pink);
+    }
+
+    .empty {
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+    }
   </style>
 </head>
+
 <body>
 
-<h2>💅 Запись!!!</h2>
+<h2>💅 Запись на ноготочки</h2>
 <div id="content"></div>
 
 <script>
+/* ================= DEV MODE ================= */
+// null → обычная логика
+// "admin" → принудительно админка
+// "client" → принудительно клиент
+let DEV_FORCE_ROLE = localStorage.getItem("devRole");
+/* ============================================ */
+
 const tg = window.Telegram.WebApp;
 tg.expand();
 
 const user = tg.initDataUnsafe.user;
-const ADMIN_ID = 381232429; // тот же id
+const ADMIN_ID = 381232429;
+const API = "https://nails-backend-5knq.onrender.com";
 
 const content = document.getElementById("content");
 
-// --- АДМИН ---
+const isAdmin =
+  DEV_FORCE_ROLE === "admin" ||
+  (DEV_FORCE_ROLE === null && user.id === ADMIN_ID);
+
+/* ---------- DEV SWITCHER ---------- */
 if (user.id === ADMIN_ID) {
-  content.innerHTML = `
-    <div class="admin">
-      <h3>👩‍🎨 Админка</h3>
-      <input type="date" id="date">
-      <input type="time" id="time">
-      <button onclick="addSlot()">➕ Добавить окошко</button>
-      <button onclick="loadAppointments()">📋 Записи</button>
-      <div id="list"></div>
-    </div>
+  const dev = document.createElement("div");
+  dev.className = "section card";
+  dev.innerHTML = `
+    <strong>DEV режим</strong><br><br>
+    <button class="btn-secondary" onclick="setRole('admin')">👩‍🎨 Админ</button>
+    <button class="btn-secondary" onclick="setRole('client')">👤 Клиент</button>
+    <button class="btn-secondary" onclick="setRole(null)">🔄 Авто</button>
   `;
+  content.appendChild(dev);
 }
 
-// --- КЛИЕНТ ---
+function setRole(role) {
+  if (role === null) localStorage.removeItem("devRole");
+  else localStorage.setItem("devRole", role);
+  location.reload();
+}
+/* ---------------------------------- */
+
+/* ---------- ADMIN ---------- */
+if (isAdmin) {
+  const adminBlock = document.createElement("div");
+  adminBlock.className = "section card admin";
+  adminBlock.innerHTML = `
+    <h3>👩‍🎨 Админка</h3>
+    <input type="date" id="date">
+    <input type="time" id="time">
+    <button class="btn-primary" onclick="addSlot()">➕ Добавить окошко</button>
+    <hr style="margin:12px 0">
+    <button class="btn-secondary" onclick="loadAppointments()">📋 Показать записи</button>
+    <div id="appointments"></div>
+  `;
+  content.appendChild(adminBlock);
+}
+
+/* ---------- SLOTS ---------- */
+const slotsBlock = document.createElement("div");
+slotsBlock.className = "section card";
+slotsBlock.innerHTML = `<h3>📅 Свободные окошки</h3>`;
+content.appendChild(slotsBlock);
+
 loadSlots();
 
 function loadSlots() {
-  fetch("https://nails-backend-5knq.onrender.com/slots")
+  fetch(`${API}/slots`)
     .then(r => r.json())
     .then(slots => {
+      if (slots.length === 0) {
+        slotsBlock.innerHTML += `<div class="empty">Свободных окошек пока нет</div>`;
+        return;
+      }
       slots.forEach(s => {
-        const btn = document.createElement("button");
-        btn.innerText = `${s.date} ${s.time} — записаться`;
-        btn.onclick = () => book(s.id);
-        content.appendChild(btn);
+        const div = document.createElement("div");
+        div.className = "slot";
+        div.innerHTML = `
+          <div class="slot-time">${s.date} · ${s.time}</div>
+          <button class="btn-primary">Записаться</button>
+        `;
+        div.querySelector("button").onclick = () => book(s.id);
+        slotsBlock.appendChild(div);
       });
     });
 }
 
 function book(slotId) {
-  fetch("https://nails-backend-5knq.onrender.com/book", {
+  fetch(`${API}/book`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -64,13 +193,17 @@ function book(slotId) {
       userName: user.first_name
     })
   }).then(() => {
-    alert("Вы записались! 💅");
-    tg.close();
+    tg.showPopup({
+      title: "Запись подтверждена 💅",
+      message: "Ждём вас в выбранное время",
+      buttons: [{ type: "close" }]
+    });
+    setTimeout(() => tg.close(), 1500);
   });
 }
 
 function addSlot() {
-  fetch("https://nails-backend-5knq.onrender.com/slots", {
+  fetch(`${API}/slots`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -78,15 +211,30 @@ function addSlot() {
       time: time.value,
       userId: user.id
     })
-  }).then(() => alert("Добавлено"));
+  }).then(() => {
+    tg.showPopup({
+      title: "Готово",
+      message: "Окошко добавлено",
+      buttons: [{ type: "close" }]
+    });
+  });
 }
 
 function loadAppointments() {
-  fetch(`https://nails-backend-5knq.onrender.com/appointments/${user.id}`)
+  fetch(`${API}/appointments/${user.id}`)
     .then(r => r.json())
     .then(list => {
-      document.getElementById("list").innerHTML =
-        list.map(a => `${a.date} ${a.time} — ${a.user_name}`).join("<br>");
+      const el = document.getElementById("appointments");
+      el.innerHTML = "";
+      if (list.length === 0) {
+        el.innerHTML = `<div class="empty">Записей пока нет</div>`;
+        return;
+      }
+      list.forEach(a => {
+        const div = document.createElement("div");
+        div.textContent = `${a.date} ${a.time} — ${a.user_name}`;
+        el.appendChild(div);
+      });
     });
 }
 </script>
