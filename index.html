@@ -148,6 +148,14 @@ textarea {
       <button class="main-btn" onclick="addSlot()">Добавить слот</button>
     </div>
 
+    <div class="card" style="background: #fdf2f5;">
+      <h3>🚀 Массовая загрузка (для Насти)</h3>
+      <p style="font-size: 11px; color: #888;">Вставь список вида: 04.01 11:00/13:00/15:00</p>
+      <textarea id="bulkInput" rows="5" placeholder="04.01 11:00/13:00/15:00
+    05.01 11:00/13:00"></textarea>
+      <button class="main-btn" style="margin-top:10px; background: #6c5ce7;" onclick="processBulk()">Загрузить весь месяц ✨</button>
+    </div>
+
     <div class="card">
       <h3>📋 Все записи</h3>
       <div id="appointmentsAdmin"></div>
@@ -338,6 +346,43 @@ async function fetchAppointments() {
       💅 ${a.services}
     </div>
   `).join("");
+}
+
+async function processBulk() {
+  const text = document.getElementById("bulkInput").value;
+  const lines = text.split('\n').filter(l => l.trim() !== '');
+  const slotsToUpload = [];
+
+  lines.forEach(line => {
+    // Регулярка выцепляет дату и всё, что после неё
+    const match = line.match(/(\d{2}\.\d{2})\s+(.+)/);
+    if (match) {
+      const dayMonth = match[1]; // "04.01"
+      const times = match[2].split('/'); // ["11:00", "13:00"]
+      
+      // Превращаем "04.01" в "2026-01-04"
+      const [day, month] = dayMonth.split('.');
+      const year = new Date().getFullYear();
+      const dateIso = `${year}-${month}-${day}`;
+
+      times.forEach(t => {
+        slotsToUpload.push({ date: dateIso, time: t.trim() });
+      });
+    }
+  });
+
+  if (slotsToUpload.length === 0) return alert("Не удалось распознать формат");
+
+  const res = await fetch(`${API}/slots/bulk`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ slots: slotsToUpload })
+  });
+  
+  if (res.ok) {
+    alert(`Успешно добавлено ${slotsToUpload.length} слотов!`);
+    document.getElementById("bulkInput").value = "";
+  }
 }
 
 fetchServices();
