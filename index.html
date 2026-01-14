@@ -18,91 +18,52 @@
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
-  background-color: var(--bg);
-  color: var(--accent);
-  -webkit-font-smoothing: antialiased;
-}
-
+body { margin: 0; font-family: -apple-system, sans-serif; background-color: var(--bg); color: var(--accent); }
 #app { max-width: 420px; margin: 0 auto; padding: 20px; padding-bottom: 50px; }
 
 header { margin-bottom: 30px; }
-header h1 { font-size: 26px; font-weight: 700; margin: 0; letter-spacing: -0.5px; }
-header p { color: var(--secondary); margin: 4px 0 0; font-size: 14px; }
-
-/* Tabs */
+header h1 { font-size: 26px; font-weight: 700; margin: 0; }
 .tabs { display: flex; background: var(--soft-nude); padding: 4px; border-radius: 14px; margin-bottom: 25px; }
-.tabs button { 
-  flex: 1; border: none; padding: 10px; border-radius: 11px; font-size: 13px; 
-  font-weight: 500; cursor: pointer; background: transparent; transition: 0.2s;
-}
+.tabs button { flex: 1; border: none; padding: 10px; border-radius: 11px; font-size: 13px; font-weight: 500; cursor: pointer; background: transparent; }
 .tabs button.active { background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
-/* Layout Elements */
-.section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--secondary); margin-bottom: 12px; padding-left: 2px; }
+.section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--secondary); margin-bottom: 12px; }
 .card { background: var(--card); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 20px; border: 1px solid var(--separator); }
 
-/* Calendar */
+/* Календарь */
 .calendar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
 .calendar::-webkit-scrollbar { display: none; }
-.day { 
-  min-width: 58px; padding: 14px 0; border-radius: 18px; text-align: center; 
-  background: white; border: 1px solid var(--separator); transition: 0.3s;
-}
-.day span { display: block; font-size: 10px; color: var(--secondary); margin-bottom: 4px; text-transform: uppercase; }
-.day b { font-size: 17px; font-weight: 600; }
+.day { min-width: 58px; padding: 14px 0; border-radius: 18px; text-align: center; background: white; border: 1px solid var(--separator); }
 .day.active { background: var(--accent); color: white; border-color: var(--accent); }
-.day.active span { color: rgba(255,255,255,0.6); }
+.day span { display: block; font-size: 10px; text-transform: uppercase; opacity: 0.6; }
 
-/* Slots Grid */
+/* Слоты */
 .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.slot { 
-  padding: 14px; border-radius: var(--radius-sm); text-align: center; 
-  font-size: 14px; font-weight: 500; background: white; border: 1px solid var(--separator); cursor: pointer; transition: 0.2s;
-}
-.slot.selected { border-color: var(--accent); background: var(--accent); color: white; }
+.slot { padding: 14px; border-radius: var(--radius-sm); text-align: center; font-size: 14px; border: 1px solid var(--separator); cursor: pointer; }
+.slot.selected { background: var(--accent); color: white; }
 
-/* Service List */
+/* Услуги */
 .service-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
-.service-item:last-child { border: none; }
-.service-name { font-weight: 500; font-size: 15px; }
-.service-price { color: var(--secondary); font-size: 14px; margin-top: 2px; }
-.checkbox { width: 22px; height: 22px; border: 2px solid #e0e0e0; border-radius: 7px; transition: 0.2s; position: relative; }
-.service-item.active .checkbox { background: var(--accent); border-color: var(--accent); }
-.service-item.active .checkbox::after { content: '✓'; color: white; position: absolute; top: -1px; left: 4px; font-size: 13px; }
+.service-item.active .checkbox { background: var(--accent); border-color: var(--accent); position: relative; }
+.service-item.active .checkbox::after { content: '✓'; color: white; position: absolute; left: 4px; top: -1px; font-size: 12px; }
+.checkbox { width: 22px; height: 22px; border: 2px solid #e0e0e0; border-radius: 7px; }
 
-/* Footer Info */
-.total-box { margin: 25px 0; text-align: center; border-top: 1px solid var(--separator); padding-top: 20px; }
-.total-label { color: var(--secondary); font-size: 13px; margin-bottom: 6px; }
-.total-amount { font-size: 32px; font-weight: 700; letter-spacing: -1px; }
+/* Статистика */
+.stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.stat-box { background: var(--soft-nude); padding: 15px; border-radius: 18px; text-align: center; }
+.stat-box b { display: block; font-size: 18px; }
+.stat-box span { font-size: 10px; color: var(--secondary); text-transform: uppercase; }
 
-/* Main Button */
-.btn-primary { 
-  width: 100%; background: var(--accent); color: white; border: none; border-radius: 18px; 
-  padding: 18px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s;
-}
-.btn-primary:active { transform: scale(0.97); }
-
-/* Inputs */
-textarea { 
-  width: 100%; border: 1px solid var(--separator); border-radius: var(--radius-sm); padding: 15px; 
-  font-family: inherit; font-size: 14px; background: #fafafa; resize: none;
-}
-
-/* Admin Styles */
-.admin-list-item { padding: 12px; border-bottom: 1px solid var(--separator); font-size: 13px; line-height: 1.5; }
-.bulk-textarea { font-family: 'Courier New', monospace; font-size: 12px; background: #1a1a1a; color: #a2fca2; border: none; }
+.btn-primary { width: 100%; background: var(--accent); color: white; border: none; border-radius: 18px; padding: 18px; font-size: 16px; font-weight: 600; cursor: pointer; }
+textarea { width: 100%; border: 1px solid var(--separator); border-radius: var(--radius-sm); padding: 15px; background: #fafafa; font-family: inherit; }
 </style>
 </head>
 <body>
 
 <div id="app">
   <header>
-    <h1 id="shopName">Nails & Aesthetic</h1>
-    <p id="shopStatus">Загрузка данных...</p>
+    <h1>Nails Studio</h1>
+    <p id="shopStatus">Загрузка...</p>
   </header>
 
   <div class="tabs">
@@ -111,239 +72,157 @@ textarea {
   </div>
 
   <div id="clientPanel">
-    <div class="section-title">1. Дата визита</div>
+    <div class="section-title">1. Дата</div>
     <div class="calendar" id="calendar"></div>
-
-    <div class="section-title" style="margin-top:20px;">2. Доступное время</div>
-    <div id="slots" class="slots-grid">
-      <div style="grid-column:1/4; color:var(--secondary); font-size:14px; padding:20px 0;">Выберите дату в календаре</div>
-    </div>
-
-    <div class="section-title" style="margin-top:20px;">3. Выбор услуг</div>
+    <div class="section-title">2. Время</div>
+    <div id="slots" class="slots-grid"></div>
+    <div class="section-title">3. Услуги</div>
     <div class="card" id="servicesContainer"></div>
-
-    <div class="section-title">4. Детали заказа</div>
-    <div class="card" style="padding: 12px;">
-      <textarea id="comment" rows="2" placeholder="Длина, дизайн, снятие..."></textarea>
+    <div style="text-align:center; padding: 20px 0;">
+      <span style="color:var(--secondary); font-size:13px;">Сумма:</span>
+      <div style="font-size:32px; font-weight:700;"><span id="totalDisplay">0</span> ₽</div>
     </div>
-
-    <div class="total-box">
-      <div class="total-label">Итоговая стоимость</div>
-      <div class="total-amount"><span id="totalDisplay">0</span> ₽</div>
-    </div>
-
-    <button class="btn-primary" onclick="submitBooking()">Записаться</button>
+    <button class="btn-primary" onclick="submitBooking()">Подтвердить 💖</button>
   </div>
 
   <div id="adminPanel" style="display:none;">
-    <div class="section-title">Массовое расписание</div>
-    <div class="card" style="background: #1a1a1a;">
-      <textarea id="bulkInput" class="bulk-textarea" rows="8" placeholder="04.01 11:00/13:00/15:00
-05.01 12:00/14:00"></textarea>
-      <button class="btn-primary" style="margin-top:15px; background: #ffffff; color: #000;" onclick="handleBulkUpload()">Опубликовать окошки</button>
+    <div class="section-title">Аналитика</div>
+    <div class="stats-container">
+      <div class="stat-box"><b id="statRevenue">0 ₽</b><span>Выручка</span></div>
+      <div class="stat-box"><b id="statAvg">0 ₽</b><span>Ср. чек</span></div>
     </div>
-    
-    <div class="section-title">Ближайшие записи</div>
-    <div class="card" id="adminAppointments" style="padding:0;"></div>
+    <div class="section-title">Загрузить окошки</div>
+    <div class="card" style="background:#1a1a1a">
+      <textarea id="bulkInput" rows="5" style="background:transparent; color:#fff; border:none;" placeholder="04.01 11:00/13:00"></textarea>
+      <button class="btn-primary" style="margin-top:10px; background:#fff; color:#000;" onclick="handleBulkUpload()">Опубликовать</button>
+    </div>
+    <div id="adminAppointments"></div>
   </div>
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
-tg.expand();
-tg.ready();
-
-// Настройки API
-const API = "https://nails-backend-5knq.onrender.com"; // ЗАМЕНИ НА СВОЙ URL
+const API = "ТВОЙ_API_URL"; // ЗАМЕНИТЬ ПРИ ДЕПЛОЕ
 const ADMIN_ID = 381232429;
 
-// Данные пользователя из ТГ
-const userId = tg.initDataUnsafe?.user?.id || 381232429;
-const userName = tg.initDataUnsafe?.user?.first_name || "Гость";
+let uId = tg.initDataUnsafe?.user?.id || ADMIN_ID;
+let uName = tg.initDataUnsafe?.user?.first_name || "Гость";
+let selDate, selSlotId, selSrv = [];
 
-let selectedDate = null;
-let selectedSlotId = null;
-let selectedServices = [];
+document.getElementById("shopStatus").innerText = `Привет, ${uName}!`;
 
-// Инициализация
-document.getElementById("shopStatus").innerText = `Привет, ${userName}!`;
+// Переключение вкладок
+document.getElementById("clientBtn").onclick = () => { switchTab('client'); };
+document.getElementById("adminBtn").onclick = () => { switchTab('admin'); loadStats(); };
 
-// Переключение табов
-document.getElementById("clientBtn").onclick = () => switchTab('client');
-document.getElementById("adminBtn").onclick = () => switchTab('admin');
-
-function switchTab(mode) {
-  document.getElementById("clientPanel").style.display = mode === 'client' ? 'block' : 'none';
-  document.getElementById("adminPanel").style.display = mode === 'admin' ? 'block' : 'none';
-  document.getElementById("clientBtn").classList.toggle('active', mode === 'client');
-  document.getElementById("adminBtn").classList.toggle('active', mode === 'admin');
-  if(mode === 'admin') fetchAdminData();
+function switchTab(m) {
+  document.getElementById("clientPanel").style.display = m==='client'?'block':'none';
+  document.getElementById("adminPanel").style.display = m==='admin'?'block':'none';
+  document.getElementById("clientBtn").classList.toggle('active', m==='client');
+  document.getElementById("adminBtn").classList.toggle('active', m==='admin');
+  if(m==='admin') fetchAdminData();
 }
 
-// Рендер календаря
-const calendar = document.getElementById("calendar");
-const weekdays = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
-
+// Генератор Календаря
+const cal = document.getElementById("calendar");
 for (let i = 0; i < 14; i++) {
-  const d = new Date();
-  d.setDate(d.getDate() + i);
+  const d = new Date(); d.setDate(d.getDate() + i);
   const iso = d.toISOString().split('T')[0];
-  
   const div = document.createElement("div");
   div.className = "day";
-  div.innerHTML = `<span>${weekdays[d.getDay()]}</span><b>${d.getDate()}</b>`;
+  div.innerHTML = `<span>${["Вс","Пн","Вт","Ср","Чт","Пт","Сб"][d.getDay()]}</span><b>${d.getDate()}</b>`;
   div.onclick = () => {
     document.querySelectorAll(".day").forEach(el => el.classList.remove("active"));
-    div.classList.add("active");
-    selectedDate = iso;
-    loadSlots(iso);
+    div.classList.add("active"); selDate = iso; loadSlots(iso);
   };
-  calendar.appendChild(div);
+  cal.appendChild(div);
 }
 
-// Загрузка слотов
 async function loadSlots(date) {
-  const container = document.getElementById("slots");
-  container.innerHTML = "<div style='grid-column:1/4; padding:20px;'>Загрузка...</div>";
-  
-  try {
-    const res = await fetch(`${API}/slots`);
-    const data = await res.json();
-    const daySlots = data.filter(s => s.date === date);
-    
-    container.innerHTML = "";
-    if(daySlots.length === 0) {
-      container.innerHTML = "<div style='grid-column:1/4; color:var(--secondary); padding:20px;'>Свободных мест нет</div>";
-      return;
-    }
-    
-    daySlots.forEach(s => {
-      const btn = document.createElement("div");
-      btn.className = "slot";
-      btn.innerText = s.time;
-      btn.onclick = () => {
-        document.querySelectorAll(".slot").forEach(el => el.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedSlotId = s.id;
-      };
-      container.appendChild(btn);
-    });
-  } catch(e) { container.innerHTML = "Ошибка связи с сервером"; }
+  const res = await fetch(`${API}/slots`);
+  const data = await res.json();
+  const div = document.getElementById("slots");
+  div.innerHTML = "";
+  data.filter(s => s.date === date).forEach(s => {
+    const b = document.createElement("div");
+    b.className = "slot"; b.innerText = s.time;
+    b.onclick = () => {
+      document.querySelectorAll(".slot").forEach(el => el.classList.remove("selected"));
+      b.classList.add("selected"); selSlotId = s.id;
+    };
+    div.appendChild(b);
+  });
 }
 
-// Загрузка услуг
+// Генератор .ics файла для календаря
+function downloadIcs(date, time, srv) {
+  const [y,m,d] = date.split('-');
+  const [hh,mm] = time.split(':');
+  const start = `${y}${m}${d}T${hh}${mm}00`;
+  const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${start}\nSUMMARY:Маникюр у Насти 💅\nDESCRIPTION:Услуги: ${srv}\nEND:VEVENT\nEND:VCALENDAR`;
+  const blob = new Blob([ics], {type:'text/calendar'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'nails.ics'; a.click();
+}
+
+async function submitBooking() {
+  if(!selSlotId) return tg.showAlert("Выберите время!");
+  const total = parseInt(document.getElementById("totalDisplay").innerText);
+  
+  const res = await fetch(`${API}/book`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({slotId: selSlotId, userId: uId, userName: uName, services: selSrv.map(s=>s.name), totalPrice: total})
+  });
+
+  if(res.ok) {
+    tg.showPopup({
+      title: "Готово!",
+      message: "Добавить запись в календарь телефона?",
+      buttons: [{id:'ics', text:'Добавить'}, {text:'Нет'}]
+    }, (id) => {
+      if(id==='ics') downloadIcs(selDate, document.querySelector('.slot.selected').innerText, selSrv.map(s=>s.name).join(', '));
+      tg.close();
+    });
+  }
+}
+
+// Функции админа
+async function loadStats() {
+  const res = await fetch(`${API}/stats`);
+  const data = await res.json();
+  document.getElementById("statRevenue").innerText = `${data.revenue} ₽`;
+  document.getElementById("statAvg").innerText = `${data.avg} ₽`;
+}
+
+async function handleBulkUpload() {
+  const lines = document.getElementById("bulkInput").value.split('\n').filter(l => l.trim());
+  const slots = [];
+  lines.forEach(line => {
+    const match = line.match(/(\d{2}\.\d{2})\s+(.+)/);
+    if(match) {
+      const [day, mon] = match[1].split('.');
+      match[2].split('/').forEach(t => slots.push({date: `2026-${mon}-${day}`, time: t.trim()}));
+    }
+  });
+  await fetch(`${API}/slots/bulk`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({slots})});
+  alert("Окошки добавлены!");
+}
+
 async function loadServices() {
   const res = await fetch(`${API}/services`);
   const data = await res.json();
   const container = document.getElementById("servicesContainer");
-  
   data.forEach(s => {
     const item = document.createElement("div");
     item.className = "service-item";
-    item.innerHTML = `
-      <div>
-        <div class="service-name">${s.name}</div>
-        <div class="service-price">${s.price} ₽ — ${s.desc}</div>
-      </div>
-      <div class="checkbox"></div>
-    `;
+    item.innerHTML = `<div><b>${s.name}</b><br><small>${s.price} ₽</small></div><div class="checkbox"></div>`;
     item.onclick = () => {
-      const idx = selectedServices.findIndex(srv => srv.id === s.id);
-      if(idx === -1) {
-        selectedServices.push(s);
-        item.classList.add("active");
-      } else {
-        selectedServices.splice(idx, 1);
-        item.classList.remove("active");
-      }
-      const total = selectedServices.reduce((sum, srv) => sum + srv.price, 0);
-      document.getElementById("totalDisplay").innerText = total;
+      const idx = selSrv.findIndex(x => x.id === s.id);
+      if(idx === -1) { selSrv.push(s); item.classList.add("active"); }
+      else { selSrv.splice(idx,1); item.classList.remove("active"); }
+      document.getElementById("totalDisplay").innerText = selSrv.reduce((a,b)=>a+b.price, 0);
     };
-    container.appendChild(item);
-  });
-}
-
-// Бронирование
-async function submitBooking() {
-  if(!selectedSlotId) return tg.showAlert("Выберите время визита");
-  if(selectedServices.length === 0) return tg.showAlert("Выберите хотя бы одну услугу");
-
-  const total = parseInt(document.getElementById("totalDisplay").innerText);
-  
-  tg.MainButton.setText("Подтверждаем...").show();
-  
-  try {
-    const res = await fetch(`${API}/book`, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        slotId: selectedSlotId,
-        userId,
-        userName,
-        services: selectedServices.map(s => s.name),
-        totalPrice: total,
-        comment: document.getElementById("comment").value
-      })
-    });
-    
-    if(res.ok) {
-      tg.showPopup({
-        title: "Запись создана",
-        message: "Мастер свяжется с вами для подтверждения!",
-        buttons: [{type: "close"}]
-      }, () => tg.close());
-    } else {
-      tg.showAlert("Упс! Этот слот уже заняли.");
-    }
-  } catch(e) { tg.showAlert("Ошибка сервера"); }
-  finally { tg.MainButton.hide(); }
-}
-
-// Админка: масс-загрузка
-async function handleBulkUpload() {
-  const text = document.getElementById("bulkInput").value;
-  const lines = text.split('\n').filter(l => l.trim());
-  const payload = [];
-
-  lines.forEach(line => {
-    const match = line.match(/(\d{2}\.\d{2})\s+(.+)/);
-    if(match) {
-      const times = match[2].split('/');
-      const [day, month] = match[1].split('.');
-      const isoDate = `${new Date().getFullYear()}-${month}-${day}`;
-      times.forEach(t => payload.push({date: isoDate, time: t.trim()}));
-    }
-  });
-
-  if(payload.length === 0) return alert("Формат не распознан");
-
-  const res = await fetch(`${API}/slots/bulk`, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ slots: payload })
-  });
-
-  if(res.ok) {
-    alert(`Опубликовано ${payload.length} окошек!`);
-    document.getElementById("bulkInput").value = "";
-  }
-}
-
-// Админка: список записей
-async function fetchAdminData() {
-  const res = await fetch(`${API}/appointments/${userId}`);
-  const data = await res.json();
-  const container = document.getElementById("adminAppointments");
-  container.innerHTML = data.length ? "" : "<div style='padding:20px; color:var(--secondary);'>Записей пока нет</div>";
-  
-  data.reverse().forEach(a => {
-    const item = document.createElement("div");
-    item.className = "admin-list-item";
-    item.innerHTML = `
-      <b>${a.date} | ${a.time}</b><br>
-      ${a.user_name} — ${a.total_price} ₽<br>
-      <span style="color:var(--secondary)">${a.services}</span>
-    `;
     container.appendChild(item);
   });
 }
