@@ -34,6 +34,11 @@ button { width:100%; border:none; border-radius:12px; padding:12px; background:v
 textarea { width:100%; border-radius:12px; border:1px solid #ddd; padding:10px; font-size:14px; resize:none; }
 .mode-switch { display:flex; gap:10px; margin-bottom:12px; justify-content:center; }
 .mode-switch button { width:120px; }
+.service h4 { margin:0; font-size:16px; font-weight:600; }
+.service .price { font-size:18px; font-weight:700; margin:4px 0; }
+.service div { margin-bottom:4px; }
+.service button { margin-top:6px; }
+
 
 .admin-form { display:flex; flex-direction:column; gap:8px; margin-bottom:15px; }
 .admin-form input, .admin-form select { padding:8px; border-radius:10px; border:1px solid #ddd; font-size:14px; }
@@ -185,17 +190,33 @@ async function fetchServices(){
   const res = await fetch(`${API}/services`);
   const data = await res.json();
   servicesDiv.innerHTML="";
+
   data.forEach(s=>{
-    const div=document.createElement("div");
+    const div = document.createElement("div");
     div.className="service";
-    div.innerHTML=`<span>${s.name} — ${s.price}₽</span>`;
+
+    div.innerHTML = `
+      <div>
+        <h4>${s.name}</h4>
+        <div class="price">${s.price}₽</div>
+        <div>${s.desc}</div>
+      </div>
+    `;
+
     const btn = document.createElement("button");
-    btn.innerText="Выбрать";
-    btn.onclick=()=>toggleService(s, btn);
+    btn.innerText = "Выбрать";
+    btn.onclick = () => toggleService(s, btn);
+
     div.appendChild(btn);
     servicesDiv.appendChild(div);
   });
+
+  // Дополнительная информация
+  const extra = document.createElement("small");
+  extra.innerHTML = "Френч / сложный дизайн +300₽<br>Снятие чужого покрытия +100₽";
+  servicesDiv.appendChild(extra);
 }
+
 
 // --- Выбор услуг ---
 function toggleService(service, btn){
@@ -263,6 +284,8 @@ async function fetchAppointments(){
     appointmentsAdmin.appendChild(div);
   });
 }
+
+
 
 // --- Инициализация ---
 fetchServices();
