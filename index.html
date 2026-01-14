@@ -2,292 +2,344 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Запись на ноготочки</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Nails Studio</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
-  --pink:#f6c1cc;
-  --bg:#f5f5f5;
-  --card:#fff;
-  --radius:16px;
+  --pink: #F8C8DC;
+  --dark-pink: #F4A7B8;
+  --bg: #FDFBFB;
+  --text: #4A4A4A;
+  --card: #FFFFFF;
+  --radius: 20px;
 }
 
-* { box-sizing:border-box; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  background:linear-gradient(180deg,#f6c1cc 0,#f5f5f5 180px);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.4;
 }
 
-#app { max-width:420px; margin:0 auto; padding:16px; }
-h2 { text-align:center; margin:10px 0 10px; }
-.card { background:var(--card); border-radius:var(--radius); padding:14px; margin-bottom:16px; box-shadow:0 6px 18px rgba(0,0,0,.06); }
-.calendar { display:flex; gap:8px; overflow-x:auto; }
-.day { min-width:64px; padding:10px; border-radius:12px; text-align:center; background:#eee; font-size:13px; cursor:pointer; }
-.day.active { background:var(--pink); font-weight:600; }
-.slot { padding:10px; border:1px solid #eee; border-radius:12px; margin:6px 0; cursor:pointer; }
-.slot.selected { background:var(--pink); color:#fff; font-weight:600; }
-.service { border:1px solid #eee; border-radius:14px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
-button { width:100%; border:none; border-radius:12px; padding:12px; background:var(--pink); font-size:15px; cursor:pointer; margin-top:5px; }
-textarea { width:100%; border-radius:12px; border:1px solid #ddd; padding:10px; font-size:14px; resize:none; }
-.mode-switch { display:flex; gap:10px; margin-bottom:12px; justify-content:center; }
-.mode-switch button { width:120px; }
-.service h4 { margin:0; font-size:16px; font-weight:600; }
-.service .price { font-size:18px; font-weight:700; margin:4px 0; }
-.service div { margin-bottom:4px; }
-.service button { margin-top:6px; }
+#app { max-width: 420px; margin: 0 auto; padding: 16px; padding-bottom: 40px; }
 
+h2 { text-align: center; font-weight: 300; letter-spacing: 1px; color: #333; }
+h3 { font-size: 17px; margin-bottom: 12px; font-weight: 600; }
 
-.admin-form { display:flex; flex-direction:column; gap:8px; margin-bottom:15px; }
-.admin-form input, .admin-form select { padding:8px; border-radius:10px; border:1px solid #ddd; font-size:14px; }
-.admin-form button { padding:10px; border-radius:10px; background:#f6c1cc; border:none; cursor:pointer; font-weight:600; transition:0.2s; }
-.admin-form button:hover { background:#f4a7b8; }
-#appointmentsAdmin div { background:#fff0f6; padding:8px; border-radius:10px; margin-bottom:6px; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
+.card { 
+  background: var(--card); 
+  border-radius: var(--radius); 
+  padding: 18px; 
+  margin-bottom: 16px; 
+  box-shadow: 0 4px 15px rgba(244, 167, 184, 0.1);
+  border: 1px solid rgba(248, 200, 220, 0.3);
+}
+
+/* Календарь */
+.calendar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+.calendar::-webkit-scrollbar { display: none; }
+.day { 
+  min-width: 60px; padding: 12px 8px; border-radius: 15px; 
+  text-align: center; background: #F9F9F9; transition: 0.3s; cursor: pointer; border: 1px solid #EEE;
+}
+.day.active { background: var(--pink); border-color: var(--dark-pink); transform: scale(1.05); }
+.day b { display: block; font-size: 18px; }
+
+/* Слоты */
+.slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.slot { 
+  padding: 12px; border: 1px solid #EEE; border-radius: 12px; 
+  text-align: center; font-size: 14px; cursor: pointer; transition: 0.2s;
+}
+.slot.selected { background: var(--pink); border-color: var(--dark-pink); font-weight: 600; }
+
+/* Услуги */
+.service { 
+  display: flex; justify-content: space-between; align-items: center; 
+  padding: 12px 0; border-bottom: 1px solid #F5F5F5;
+}
+.service:last-child { border: none; }
+.service-info h4 { margin: 0; font-size: 15px; }
+.service-info span { font-size: 13px; color: #888; }
+.service-price { font-weight: 700; margin-right: 10px; white-space: nowrap; }
+.select-btn { 
+  background: #F0F0F0; border: none; border-radius: 10px; 
+  padding: 6px 12px; font-size: 12px; cursor: pointer; min-width: 85px;
+}
+.select-btn.active { background: var(--dark-pink); color: white; }
+
+/* Кнопки и формы */
+.main-btn { 
+  width: 100%; background: var(--dark-pink); color: white; border: none; 
+  border-radius: 15px; padding: 16px; font-size: 16px; font-weight: 600;
+  cursor: pointer; box-shadow: 0 4px 10px rgba(244, 167, 184, 0.3);
+}
+textarea { 
+  width: 100%; border-radius: 12px; border: 1px solid #EEE; padding: 12px; 
+  font-size: 14px; background: #FAFAFA;
+}
+
+.mode-switch { display: flex; gap: 8px; margin-bottom: 20px; }
+.mode-switch button { 
+  flex: 1; padding: 10px; border-radius: 12px; border: none; background: #EEE; font-size: 13px;
+}
+.mode-switch button.active { background: var(--pink); font-weight: 600; }
+
+/* Админка записи */
+.appointment-item { 
+  font-size: 13px; padding: 10px; border-bottom: 1px solid #F5F5F5; 
+}
 </style>
 </head>
 <body>
+
 <div id="app">
+  <h2>Nails Studio 💅</h2>
 
-<h2>💅 Запись на ноготочки</h2>
-
-<div class="mode-switch">
-  <button id="clientBtn">👤 Клиент</button>
-  <button id="adminBtn">🧑‍🎨 Админ</button>
-</div>
-
-<!-- ================= Админка ================= -->
-<div id="adminPanel" style="display:none;" class="card">
-  <h3>🧑‍🎨 Админка</h3>
-  
-  <div class="admin-form">
-    <label>Дата слота:</label>
-    <input type="date" id="slotDate" min="" max="">
-    
-    <label>Время:</label>
-    <select id="slotTime">
-      <option value="11:00">11:00</option>
-      <option value="13:00">13:00</option>
-      <option value="15:00">15:00</option>
-      <option value="17:00">17:00</option>
-      <option value="20:00">20:00</option>
-    </select>
-    
-    <button onclick="addSlot()">➕ Добавить слот</button>
+  <div class="mode-switch">
+    <button id="clientBtn" class="active">Клиент</button>
+    <button id="adminBtn">Админ панели</button>
   </div>
 
-  <h4>📋 Существующие записи</h4>
-  <div id="appointmentsAdmin" style="margin-top:10px;"></div>
-</div>
+  <div id="clientPanel">
+    <div class="card">
+      <h3>📅 Выберите день</h3>
+      <div class="calendar" id="calendar"></div>
+    </div>
 
-<!-- ================= Клиент ================= -->
-<div id="clientPanel">
-  <div class="card">
-    <h3>📅 Выберите день</h3>
-    <div class="calendar" id="calendar"></div>
+    <div class="card">
+      <h3>⏰ Свободное время</h3>
+      <div id="slots" class="slots-grid">Пожалуйста, выберите дату</div>
+    </div>
+
+    <div class="card">
+      <h3>✨ Услуги</h3>
+      <div id="services"></div>
+      <div style="margin-top:15px; text-align: right;">
+        <span style="color: #888;">Итого:</span> 
+        <b style="font-size: 20px;"><span id="total">0</span>₽</b>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📝 Пожелания</h3>
+      <textarea id="comment" rows="2" placeholder="Дизайн, длина, снятие..."></textarea>
+    </div>
+
+    <button class="main-btn" onclick="submitBooking()">Записаться 💖</button>
   </div>
 
-  <div class="card">
-    <h3>⏰ Доступные слоты</h3>
-    <div id="slots"></div>
-  </div>
+  <div id="adminPanel" style="display:none;">
+    <div class="card">
+      <h3>➕ Добавить слот</h3>
+      <input type="date" id="slotDate" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:1px solid #EEE;">
+      <select id="slotTime" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:1px solid #EEE;">
+        <option value="10:00">10:00</option>
+        <option value="12:00">12:00</option>
+        <option value="14:00">14:00</option>
+        <option value="16:00">16:00</option>
+        <option value="18:00">18:00</option>
+        <option value="20:00">20:00</option>
+      </select>
+      <button class="main-btn" onclick="addSlot()">Добавить слот</button>
+    </div>
 
-  <div class="card">
-    <h3>💸 Услуги</h3>
-    <div id="services"></div>
-    <div style="margin-top:10px; font-weight:600;">Итого: <span id="total">0</span>₽</div>
+    <div class="card">
+      <h3>📋 Все записи</h3>
+      <div id="appointmentsAdmin"></div>
+    </div>
   </div>
-
-  <div class="card">
-    <h3>📝 Комментарий</h3>
-    <textarea id="comment" rows="3" placeholder="Пожелания, дизайн, длина..."></textarea>
-  </div>
-
-  <button onclick="submitBooking()">💖 Подтвердить запись</button>
 </div>
 
 <script>
-const API = "https://nails-backend-5knq.onrender.com";
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+const API = "https://nails-backend-5knq.onrender.com"; // Проверь URL!
+const ADMIN_ID = 381232429;
+
+let userId = tg.initDataUnsafe?.user?.id || 381232429;
+let userName = tg.initDataUnsafe?.user?.first_name || "Клиент";
+
 let selectedDate = null;
 let selectedSlotId = null;
 let selectedServices = [];
-let totalPrice = 0;
 
-// для разработки и админки
-let userId = 381232429;
-let userName = "Ирина";
+// Переключение вкладок
+document.getElementById("clientBtn").onclick = function() {
+  this.classList.add("active");
+  document.getElementById("adminBtn").classList.remove("active");
+  document.getElementById("clientPanel").style.display = "block";
+  document.getElementById("adminPanel").style.display = "none";
+};
 
-// Элементы
-const calendar = document.getElementById("calendar");
-const slotsDiv = document.getElementById("slots");
-const servicesDiv = document.getElementById("services");
-const totalSpan = document.getElementById("total");
-const commentInput = document.getElementById("comment");
-const clientPanel = document.getElementById("clientPanel");
-const adminPanel = document.getElementById("adminPanel");
-const appointmentsAdmin = document.getElementById("appointmentsAdmin");
+document.getElementById("adminBtn").onclick = function() {
+  this.classList.add("active");
+  document.getElementById("clientBtn").classList.remove("active");
+  document.getElementById("clientPanel").style.display = "none";
+  document.getElementById("adminPanel").style.display = "block";
+  fetchAppointments();
+};
 
-// --- Переключение режима ---
-document.getElementById("clientBtn").onclick = ()=>{ clientPanel.style.display="block"; adminPanel.style.display="none"; };
-document.getElementById("adminBtn").onclick = ()=>{ clientPanel.style.display="none"; adminPanel.style.display="block"; fetchAppointments(); };
+// Генерация календаря
+const calendarEl = document.getElementById("calendar");
+const days = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
 
-// --- Настройка min/max даты для админа ---
-const today = new Date();
-const minDate = today.toISOString().split("T")[0];
-const maxDateObj = new Date(); maxDateObj.setDate(today.getDate()+13);
-const maxDate = maxDateObj.toISOString().split("T")[0];
-document.getElementById("slotDate").setAttribute("min", minDate);
-document.getElementById("slotDate").setAttribute("max", maxDate);
-document.getElementById("slotDate").value = minDate;
-
-// --- Календарь на 14 дней ---
-for(let i=0;i<14;i++){
+for (let i = 0; i < 14; i++) {
   const d = new Date();
-  d.setDate(d.getDate()+i);
-  const div=document.createElement("div");
-  div.className="day";
-  div.innerHTML=`${d.getDate()}<br>${["Вс","Пн","Вт","Ср","Чт","Пт","Сб"][d.getDay()]}`;
-  div.onclick=()=>selectDate(d);
-  calendar.appendChild(div);
-}
-
-// --- Выбор даты ---
-function selectDate(d){
-  selectedDate = d.toISOString().split("T")[0];
-  document.querySelectorAll(".day").forEach(x=>x.classList.remove("active"));
-  event.currentTarget.classList.add("active");
-  fetchSlots();
-}
-
-// --- Получение слотов ---
-async function fetchSlots(){
-  slotsDiv.innerHTML="Загрузка...";
-  const res = await fetch(`${API}/slots`);
-  const data = await res.json();
-  slotsDiv.innerHTML="";
-  const daySlots = data.filter(s => s.date===selectedDate);
-  if(daySlots.length===0){ slotsDiv.innerHTML="Нет доступных слотов"; return; }
-
-  daySlots.forEach(s=>{
-    const div=document.createElement("div");
-    div.className="slot";
-    div.innerText=s.time;
-    div.onclick=()=>selectSlot(s.id, div);
-    slotsDiv.appendChild(div);
-  });
-}
-
-// --- Выбор слота ---
-function selectSlot(id, div){
-  selectedSlotId = id;
-  document.querySelectorAll(".slot").forEach(x=>x.classList.remove("selected"));
-  div.classList.add("selected");
-}
-
-// --- Получение услуг ---
-async function fetchServices(){
-  const res = await fetch(`${API}/services`);
-  const data = await res.json();
-  servicesDiv.innerHTML="";
-
-  data.forEach(s=>{
-    const div = document.createElement("div");
-    div.className="service";
-
-    div.innerHTML = `
-      <div>
-        <h4>${s.name}</h4>
-        <div class="price">${s.price}₽</div>
-        <div>${s.desc}</div>
-      </div>
-    `;
-
-    const btn = document.createElement("button");
-    btn.innerText = "Выбрать";
-    btn.onclick = () => toggleService(s, btn);
-
-    div.appendChild(btn);
-    servicesDiv.appendChild(div);
-  });
-
-  // Дополнительная информация
-  const extra = document.createElement("small");
-  extra.innerHTML = "Френч / сложный дизайн +300₽<br>Снятие чужого покрытия +100₽";
-  servicesDiv.appendChild(extra);
-}
-
-
-// --- Выбор услуг ---
-function toggleService(service, btn){
-  const index = selectedServices.findIndex(s=>s.id===service.id);
-  if(index===-1){ selectedServices.push(service); btn.innerText="Снято"; }
-  else { selectedServices.splice(index,1); btn.innerText="Выбрать"; }
-  totalPrice = selectedServices.reduce((a,b)=>a+b.price,0);
-  totalSpan.innerText = totalPrice;
-}
-
-// --- Подтверждение записи ---
-async function submitBooking(){
-  if(!selectedDate || !selectedSlotId){ alert("Выберите дату и слот"); return; }
-  if(selectedServices.length===0){ alert("Выберите хотя бы одну услугу"); return; }
-
-  const payload = {
-    slotId: selectedSlotId,
-    userId,
-    userName,
-    services: selectedServices.map(s=>s.name),
-    totalPrice,
-    comment: commentInput.value
+  d.setDate(d.getDate() + i);
+  const dateStr = d.toISOString().split("T")[0];
+  
+  const div = document.createElement("div");
+  div.className = "day";
+  div.innerHTML = `<span>${days[d.getDay()]}</span><b>${d.getDate()}</b>`;
+  div.onclick = (e) => {
+    document.querySelectorAll(".day").forEach(el => el.classList.remove("active"));
+    div.classList.add("active");
+    selectedDate = dateStr;
+    fetchSlots(dateStr);
   };
+  calendarEl.appendChild(div);
+}
 
-  const res = await fetch(`${API}/book`,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify(payload)
-  });
-
-  const data = await res.json();
-  if(data.success){
-    Telegram.WebApp.showPopup({title:"Готово 💅", message:"Вы успешно записались", buttons:[{type:"close"}]});
-    fetchSlots();
-  }else{
-    alert(data.error || "Ошибка бронирования");
+async function fetchSlots(date) {
+  const slotsDiv = document.getElementById("slots");
+  slotsDiv.innerHTML = "⌛...";
+  
+  try {
+    const res = await fetch(`${API}/slots`);
+    const allSlots = await res.json();
+    const daySlots = allSlots.filter(s => s.date === date);
+    
+    slotsDiv.innerHTML = "";
+    if (daySlots.length === 0) {
+      slotsDiv.innerHTML = "<div style='grid-column: 1/4; color: #999;'>Нет свободных мест</div>";
+      return;
+    }
+    
+    daySlots.forEach(s => {
+      const d = document.createElement("div");
+      d.className = "slot";
+      d.innerText = s.time;
+      d.onclick = () => {
+        document.querySelectorAll(".slot").forEach(el => el.classList.remove("selected"));
+        d.classList.add("selected");
+        selectedSlotId = s.id;
+      };
+      slotsDiv.appendChild(d);
+    });
+  } catch (e) {
+    slotsDiv.innerHTML = "Ошибка загрузки";
   }
 }
 
-// --- Админка: добавить слот вручную ---
-async function addSlot(){
-  const date = document.getElementById("slotDate").value;
-  const time = document.getElementById("slotTime").value;
-  if(!date || !time){ alert("Выберите дату и время"); return; }
-
-  try{
-    const res = await fetch(`${API}/slots`,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({date, time, userId})
-    });
-    if(res.ok){ alert("Слот добавлен!"); fetchAppointments(); }
-    else { const err = await res.json(); alert("Ошибка добавления слота: "+(err.error||res.statusText)); }
-  } catch(e){ alert("Ошибка добавления слота: "+e.message); }
-}
-
-// --- Админка: показать записи ---
-async function fetchAppointments(){
-  const res = await fetch(`${API}/appointments/${userId}`);
+async function fetchServices() {
+  const res = await fetch(`${API}/services`);
   const data = await res.json();
-  appointmentsAdmin.innerHTML="";
-  data.forEach(a=>{
+  const container = document.getElementById("services");
+  container.innerHTML = "";
+
+  data.forEach(s => {
     const div = document.createElement("div");
-    div.innerHTML=`${a.date} ${a.time} — ${a.user_name} — ${a.services} — ${a.total_price}₽ — ${a.status}`;
-    appointmentsAdmin.appendChild(div);
+    div.className = "service";
+    div.innerHTML = `
+      <div class="service-info">
+        <h4>${s.name}</h4>
+        <span>${s.desc}</span>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <span class="service-price">${s.price}₽</span>
+        <button class="select-btn" id="srv-${s.id}">Выбрать</button>
+      </div>
+    `;
+    div.querySelector("button").onclick = (e) => toggleService(s, e.target);
+    container.appendChild(div);
   });
 }
 
+function toggleService(service, btn) {
+  const idx = selectedServices.findIndex(s => s.id === service.id);
+  if (idx === -1) {
+    selectedServices.push(service);
+    btn.innerText = "Выбрано ✅";
+    btn.classList.add("active");
+  } else {
+    selectedServices.splice(idx, 1);
+    btn.innerText = "Выбрать";
+    btn.classList.remove("active");
+  }
+  const total = selectedServices.reduce((sum, s) => sum + s.price, 0);
+  document.getElementById("total").innerText = total;
+}
 
+async function submitBooking() {
+  if (!selectedSlotId) return tg.showAlert("Выберите время записи!");
+  if (selectedServices.length === 0) return tg.showAlert("Выберите хотя бы одну услугу!");
 
-// --- Инициализация ---
+  const payload = {
+    slotId: selectedSlotId,
+    userId: userId,
+    userName: userName,
+    services: selectedServices.map(s => s.name),
+    totalPrice: parseInt(document.getElementById("total").innerText),
+    comment: document.getElementById("comment").value
+  };
+
+  tg.MainButton.setText("Отправка...").show();
+
+  try {
+    const res = await fetch(`${API}/book`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    
+    if (result.success) {
+      tg.showPopup({
+        title: "Успешно!",
+        message: "Настя уже получила твою заявку. До встречи!",
+        buttons: [{ type: "close" }]
+      }, () => tg.close());
+    } else {
+      tg.showAlert("Ошибка: " + result.error);
+    }
+  } catch (e) {
+    tg.showAlert("Сервер не отвечает");
+  } finally {
+    tg.MainButton.hide();
+  }
+}
+
+// Админ функции
+async function addSlot() {
+  const date = document.getElementById("slotDate").value;
+  const time = document.getElementById("slotTime").value;
+  await fetch(`${API}/slots`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ date, time })
+  });
+  alert("Слот добавлен!");
+}
+
+async function fetchAppointments() {
+  const res = await fetch(`${API}/appointments/${userId}`);
+  const data = await res.json();
+  const container = document.getElementById("appointmentsAdmin");
+  container.innerHTML = data.map(a => `
+    <div class="appointment-item">
+      <b>${a.date} в ${a.time}</b><br>
+      👤 ${a.user_name} | 💰 ${a.total_price}₽<br>
+      💅 ${a.services}
+    </div>
+  `).join("");
+}
+
 fetchServices();
 </script>
 </body>
