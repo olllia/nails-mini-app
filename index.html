@@ -1,280 +1,185 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Запись на ноготочки</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Запись на ноготочки</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <style>
-    :root {
-      --pink: #f6c1cc;
-      --pink-dark: #e89aaa;
-      --bg: #f7f7f7;
-      --card: #ffffff;
-      --text: #333;
-      --radius: 16px;
-    }
+<style>
+:root {
+  --pink:#f6c1cc;
+  --bg:#f5f5f5;
+  --card:#fff;
+  --radius:16px;
+}
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+* { box-sizing:border-box; }
 
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(180deg, #f6c1cc 0%, #f7f7f7 160px);
-      color: var(--text);
-    }
+body {
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:linear-gradient(180deg,#f6c1cc 0,#f5f5f5 180px);
+}
 
-    /* главный контейнер */
-    #app {
-      max-width: 420px;
-      margin: 0 auto;
-      padding: 16px;
-      min-height: 100vh;
-    }
+#app {
+  max-width:420px;
+  margin:0 auto;
+  padding:16px;
+}
 
-    h2 {
-      text-align: center;
-      margin: 8px 0 20px;
-    }
+h2 {
+  text-align:center;
+  margin:10px 0 20px;
+}
 
-    h3 {
-      margin: 0 0 10px;
-    }
+.card {
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:14px;
+  margin-bottom:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
+}
 
-    .section {
-      margin-bottom: 20px;
-    }
+.calendar {
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+}
 
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 14px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    }
+.day {
+  min-width:64px;
+  padding:10px;
+  border-radius:12px;
+  text-align:center;
+  background:#eee;
+  font-size:13px;
+  cursor:pointer;
+}
 
-    .admin {
-      border: 2px dashed var(--pink);
-    }
+.day.active {
+  background:var(--pink);
+  font-weight:600;
+}
 
-    .slot {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
+.service {
+  border:1px solid #eee;
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:10px;
+}
 
-    .slot-time {
-      font-weight: 500;
-      font-size: 14px;
-    }
+.service h4 {
+  margin:0;
+}
 
-    button {
-      border: none;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-size: 14px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
+.price {
+  font-size:20px;
+  font-weight:700;
+  margin:6px 0;
+}
 
-    .btn-primary {
-      background: var(--pink);
-    }
+button {
+  width:100%;
+  border:none;
+  border-radius:12px;
+  padding:12px;
+  background:var(--pink);
+  font-size:15px;
+  cursor:pointer;
+}
 
-    .btn-primary:active {
-      background: var(--pink-dark);
-    }
-
-    .btn-secondary {
-      background: #eee;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #ddd;
-      margin-bottom: 10px;
-      font-size: 15px;
-    }
-
-    .empty {
-      text-align: center;
-      color: #777;
-      font-size: 14px;
-      padding: 10px 0;
-    }
-
-    hr {
-      border: none;
-      border-top: 1px solid #eee;
-      margin: 14px 0;
-    }
-  </style>
+textarea {
+  width:100%;
+  border-radius:12px;
+  border:1px solid #ddd;
+  padding:10px;
+  font-size:14px;
+  resize:none;
+}
+</style>
 </head>
 
 <body>
-
 <div id="app">
-  <h2>💅 Запись на ноготочки</h2>
-  <div id="content"></div>
+<h2>💅 Запись на ноготочки</h2>
+
+<div class="card">
+<h3>📅 Выберите день</h3>
+<div class="calendar" id="calendar"></div>
+</div>
+
+<div class="card">
+<h3>💸 Прайс</h3>
+
+<div class="service">
+<h4>Обработка</h4>
+<div class="price">1000₽</div>
+<div>Гигиенический маникюр без покрытия</div>
+<button onclick="selectService('Обработка',1000)">Выбрать</button>
+</div>
+
+<div class="service">
+<h4>Комплекс #1</h4>
+<div class="price">2000₽</div>
+<div>Маникюр, покрытие, ремонт, простой дизайн</div>
+<button onclick="selectService('Комплекс #1',2000)">Выбрать</button>
+</div>
+
+<div class="service">
+<h4>Наращивание</h4>
+<div class="price">3000₽</div>
+<div>Средняя длина, лёгкий дизайн<br>+500₽ макс длина</div>
+<button onclick="selectService('Наращивание',3000)">Выбрать</button>
+</div>
+
+<div class="service">
+<h4>Комплекс #2</h4>
+<div class="price">2500₽</div>
+<div>Коррекция, ремонт, лёгкий дизайн</div>
+<button onclick="selectService('Комплекс #2',2500)">Выбрать</button>
+</div>
+
+<small>
+Френч / сложный дизайн +300₽<br>
+Снятие чужого покрытия +100₽
+</small>
+</div>
+
+<div class="card">
+<h3>📝 Комментарий</h3>
+<textarea rows="3" placeholder="Пожелания, дизайн, длина..."></textarea>
+</div>
+
+<button onclick="submit()">💖 Подтвердить запись</button>
 </div>
 
 <script>
-/* ================= DEV MODE ================= */
-let DEV_FORCE_ROLE = localStorage.getItem("devRole") || null;
-/* ============================================ */
+const calendar = document.getElementById("calendar");
 
-const tg = window.Telegram.WebApp;
-tg.expand();
-
-const ADMIN_ID = 381232429;
-const user = tg.initDataUnsafe?.user || {
-  id: ADMIN_ID,
-  first_name: "DEV"
-};
-
-const API = "https://nails-backend-5knq.onrender.com";
-const content = document.getElementById("content");
-
-const isAdmin =
-  DEV_FORCE_ROLE === "admin" ||
-  (DEV_FORCE_ROLE === null && user.id === ADMIN_ID);
-
-/* ===== КЛЮЧЕВОЕ: КОРРЕКТНЫЙ ОТСТУП СВЕРХУ ===== */
-function applyTopOffset() {
-  if (!tg.viewportStableHeight) return;
-  const header = window.innerHeight - tg.viewportStableHeight;
-  document.getElementById("app").style.paddingTop =
-    Math.max(header + 8, 16) + "px";
-}
-applyTopOffset();
-tg.onEvent("viewportChanged", applyTopOffset);
-/* ============================================ */
-
-/* ---------- DEV SWITCHER ---------- */
-if (user.id === ADMIN_ID) {
-  const dev = document.createElement("div");
-  dev.className = "section card";
-  dev.innerHTML = `
-    <strong>DEV режим</strong><br><br>
-    <button class="btn-secondary" onclick="setRole('admin')">👩‍🎨 Админ</button>
-    <button class="btn-secondary" onclick="setRole('client')">👤 Клиент</button>
-    <button class="btn-secondary" onclick="setRole(null)">🔄 Авто</button>
-  `;
-  content.appendChild(dev);
+for (let i=0;i<14;i++) {
+  const d = new Date();
+  d.setDate(d.getDate()+i);
+  const div=document.createElement("div");
+  div.className="day";
+  div.innerHTML=`${d.getDate()}<br>${["Вс","Пн","Вт","Ср","Чт","Пт","Сб"][d.getDay()]}`;
+  div.onclick=()=> {
+    document.querySelectorAll(".day").forEach(x=>x.classList.remove("active"));
+    div.classList.add("active");
+  }
+  calendar.appendChild(div);
 }
 
-function setRole(role) {
-  if (role === null) localStorage.removeItem("devRole");
-  else localStorage.setItem("devRole", role);
-  location.reload();
-}
-/* ---------------------------------- */
-
-/* ---------- ADMIN ---------- */
-if (isAdmin) {
-  const adminBlock = document.createElement("div");
-  adminBlock.className = "section card admin";
-  adminBlock.innerHTML = `
-    <h3>👩‍🎨 Админка</h3>
-    <input type="date" id="date">
-    <input type="time" id="time">
-    <button class="btn-primary" onclick="addSlot()">➕ Добавить окошко</button>
-    <hr>
-    <button class="btn-secondary" onclick="loadAppointments()">📋 Показать записи</button>
-    <div id="appointments"></div>
-  `;
-  content.appendChild(adminBlock);
+function selectService(name,price){
+  alert(`Выбрано: ${name} — ${price}₽`);
 }
 
-/* ---------- SLOTS ---------- */
-const slotsBlock = document.createElement("div");
-slotsBlock.className = "section card";
-slotsBlock.innerHTML = `<h3>📅 Свободные окошки</h3>`;
-content.appendChild(slotsBlock);
-
-loadSlots();
-
-function loadSlots() {
-  fetch(`${API}/slots`)
-    .then(r => r.json())
-    .then(slots => {
-      if (slots.length === 0) {
-        slotsBlock.innerHTML += `<div class="empty">Свободных окошек пока нет</div>`;
-        return;
-      }
-      slots.forEach(s => {
-        const div = document.createElement("div");
-        div.className = "slot";
-        div.innerHTML = `
-          <div class="slot-time">${s.date} · ${s.time}</div>
-          <button class="btn-primary">Записаться</button>
-        `;
-        div.querySelector("button").onclick = () => book(s.id);
-        slotsBlock.appendChild(div);
-      });
-    });
-}
-
-function book(slotId) {
-  fetch(`${API}/book`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      slotId,
-      userId: user.id,
-      userName: user.first_name
-    })
-  }).then(() => {
-    tg.showPopup({
-      title: "Запись подтверждена 💅",
-      message: "Ждём вас в выбранное время",
-      buttons: [{ type: "close" }]
-    });
-    setTimeout(() => tg.close(), 1500);
+function submit(){
+  Telegram.WebApp.showPopup({
+    title:"Готово 💅",
+    message:"Вы успешно записались",
+    buttons:[{type:"close"}]
   });
-}
-
-function addSlot() {
-  fetch(`${API}/slots`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      date: date.value,
-      time: time.value,
-      userId: user.id
-    })
-  }).then(() => {
-    tg.showPopup({
-      title: "Готово",
-      message: "Окошко добавлено",
-      buttons: [{ type: "close" }]
-    });
-  });
-}
-
-function loadAppointments() {
-  fetch(`${API}/appointments/${user.id}`)
-    .then(r => r.json())
-    .then(list => {
-      const el = document.getElementById("appointments");
-      el.innerHTML = "";
-      if (list.length === 0) {
-        el.innerHTML = `<div class="empty">Записей пока нет</div>`;
-        return;
-      }
-      list.forEach(a => {
-        const div = document.createElement("div");
-        div.textContent = `${a.date} ${a.time} — ${a.user_name}`;
-        el.appendChild(div);
-      });
-    });
 }
 </script>
 
