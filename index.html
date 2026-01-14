@@ -34,6 +34,12 @@ button { width:100%; border:none; border-radius:12px; padding:12px; background:v
 textarea { width:100%; border-radius:12px; border:1px solid #ddd; padding:10px; font-size:14px; resize:none; }
 .mode-switch { display:flex; gap:10px; margin-bottom:12px; justify-content:center; }
 .mode-switch button { width:120px; }
+
+.admin-form { display:flex; flex-direction:column; gap:8px; margin-bottom:15px; }
+.admin-form input, .admin-form select { padding:8px; border-radius:10px; border:1px solid #ddd; font-size:14px; }
+.admin-form button { padding:10px; border-radius:10px; background:#f6c1cc; border:none; cursor:pointer; font-weight:600; transition:0.2s; }
+.admin-form button:hover { background:#f4a7b8; }
+#appointmentsAdmin div { background:#fff0f6; padding:8px; border-radius:10px; margin-bottom:6px; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
 </style>
 </head>
 <body>
@@ -46,15 +52,14 @@ textarea { width:100%; border-radius:12px; border:1px solid #ddd; padding:10px; 
   <button id="adminBtn">🧑‍🎨 Админ</button>
 </div>
 
+<!-- ================= Админка ================= -->
 <div id="adminPanel" style="display:none;" class="card">
-  <h3>Админка</h3>
+  <h3>🧑‍🎨 Админка</h3>
   
-  <!-- Выбор даты и времени для нового слота -->
-  <div style="margin-bottom:10px;">
-    <label>Дата:</label>
-    <input type="date" id="slotDate" min="<?= new Date().toISOString().split('T')[0] ?>" max="">
-  </div>
-  <div style="margin-bottom:10px;">
+  <div class="admin-form">
+    <label>Дата слота:</label>
+    <input type="date" id="slotDate" min="" max="">
+    
     <label>Время:</label>
     <select id="slotTime">
       <option value="11:00">11:00</option>
@@ -63,14 +68,15 @@ textarea { width:100%; border-radius:12px; border:1px solid #ddd; padding:10px; 
       <option value="17:00">17:00</option>
       <option value="20:00">20:00</option>
     </select>
+    
+    <button onclick="addSlot()">➕ Добавить слот</button>
   </div>
-  <button onclick="addSlot()">Добавить слот</button>
 
-  <h4 style="margin-top:15px;">Записи</h4>
+  <h4>📋 Существующие записи</h4>
   <div id="appointmentsAdmin" style="margin-top:10px;"></div>
 </div>
 
-
+<!-- ================= Клиент ================= -->
 <div id="clientPanel">
   <div class="card">
     <h3>📅 Выберите день</h3>
@@ -102,9 +108,12 @@ let selectedDate = null;
 let selectedSlotId = null;
 let selectedServices = [];
 let totalPrice = 0;
-let userId = 12345; // для разработки
-let userName = "Ирина"; // для разработки
 
+// для разработки и админки
+let userId = 381232429;
+let userName = "Ирина";
+
+// Элементы
 const calendar = document.getElementById("calendar");
 const slotsDiv = document.getElementById("slots");
 const servicesDiv = document.getElementById("services");
@@ -118,7 +127,16 @@ const appointmentsAdmin = document.getElementById("appointmentsAdmin");
 document.getElementById("clientBtn").onclick = ()=>{ clientPanel.style.display="block"; adminPanel.style.display="none"; };
 document.getElementById("adminBtn").onclick = ()=>{ clientPanel.style.display="none"; adminPanel.style.display="block"; fetchAppointments(); };
 
-// --- Календарь 14 дней ---
+// --- Настройка min/max даты для админа ---
+const today = new Date();
+const minDate = today.toISOString().split("T")[0];
+const maxDateObj = new Date(); maxDateObj.setDate(today.getDate()+13);
+const maxDate = maxDateObj.toISOString().split("T")[0];
+document.getElementById("slotDate").setAttribute("min", minDate);
+document.getElementById("slotDate").setAttribute("max", maxDate);
+document.getElementById("slotDate").value = minDate;
+
+// --- Календарь на 14 дней ---
 for(let i=0;i<14;i++){
   const d = new Date();
   d.setDate(d.getDate()+i);
@@ -129,7 +147,7 @@ for(let i=0;i<14;i++){
   calendar.appendChild(div);
 }
 
-// --- Выбор дня ---
+// --- Выбор даты ---
 function selectDate(d){
   selectedDate = d.toISOString().split("T")[0];
   document.querySelectorAll(".day").forEach(x=>x.classList.remove("active"));
@@ -137,7 +155,7 @@ function selectDate(d){
   fetchSlots();
 }
 
-// --- Получение слотов с сервера ---
+// --- Получение слотов ---
 async function fetchSlots(){
   slotsDiv.innerHTML="Загрузка...";
   const res = await fetch(`${API}/slots`);
@@ -179,18 +197,13 @@ async function fetchServices(){
   });
 }
 
-// --- Выбор/снятие услуги ---
+// --- Выбор услуг ---
 function toggleService(service, btn){
   const index = selectedServices.findIndex(s=>s.id===service.id);
-  if(index===-1){
-    selectedServices.push(service);
-    btn.innerText="Снято";
-  }else{
-    selectedServices.splice(index,1);
-    btn.innerText="Выбрать";
-  }
+  if(index===-1){ selectedServices.push(service); btn.innerText="Снято"; }
+  else { selectedServices.splice(index,1); btn.innerText="Выбрать"; }
   totalPrice = selectedServices.reduce((a,b)=>a+b.price,0);
-  totalSpan.innerText=totalPrice;
+  totalSpan.innerText = totalPrice;
 }
 
 // --- Подтверждение записи ---
@@ -209,7 +222,7 @@ async function submitBooking(){
 
   const res = await fetch(`${API}/book`,{
     method:"POST",
-    headers:{ "Content-Type":"application/json" },
+    headers:{"Content-Type":"application/json"},
     body: JSON.stringify(payload)
   });
 
@@ -228,24 +241,20 @@ async function addSlot(){
   const time = document.getElementById("slotTime").value;
   if(!date || !time){ alert("Выберите дату и время"); return; }
 
-  const res = await fetch(`${API}/slots`,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({date, time, userId:12345})
-  });
-
-  if(res.ok){
-    alert("Слот добавлен!");
-    fetchAppointments(); // обновляем список
-  } else {
-    alert("Ошибка добавления слота");
-  }
+  try{
+    const res = await fetch(`${API}/slots`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({date, time, userId})
+    });
+    if(res.ok){ alert("Слот добавлен!"); fetchAppointments(); }
+    else { const err = await res.json(); alert("Ошибка добавления слота: "+(err.error||res.statusText)); }
+  } catch(e){ alert("Ошибка добавления слота: "+e.message); }
 }
 
-
-// --- Админка: показать все записи ---
+// --- Админка: показать записи ---
 async function fetchAppointments(){
-  const res = await fetch(`${API}/appointments/12345`);
+  const res = await fetch(`${API}/appointments/${userId}`);
   const data = await res.json();
   appointmentsAdmin.innerHTML="";
   data.forEach(a=>{
