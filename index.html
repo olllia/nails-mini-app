@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Запись на ноготочки</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
 <style>
 :root {
   --pink:#f6c1cc;
@@ -22,84 +21,19 @@ body {
   background:linear-gradient(180deg,#f6c1cc 0,#f5f5f5 180px);
 }
 
-#app {
-  max-width:420px;
-  margin:0 auto;
-  padding:16px;
-}
-
-h2 {
-  text-align:center;
-  margin:10px 0 20px;
-}
-
-.card {
-  background:var(--card);
-  border-radius:var(--radius);
-  padding:14px;
-  margin-bottom:16px;
-  box-shadow:0 6px 18px rgba(0,0,0,.06);
-}
-
-.calendar {
-  display:flex;
-  gap:8px;
-  overflow-x:auto;
-}
-
-.day {
-  min-width:64px;
-  padding:10px;
-  border-radius:12px;
-  text-align:center;
-  background:#eee;
-  font-size:13px;
-  cursor:pointer;
-}
-
-.day.active {
-  background:var(--pink);
-  font-weight:600;
-}
-
-.service {
-  border:1px solid #eee;
-  border-radius:14px;
-  padding:12px;
-  margin-bottom:10px;
-}
-
-.service h4 {
-  margin:0;
-}
-
-.price {
-  font-size:20px;
-  font-weight:700;
-  margin:6px 0;
-}
-
-button {
-  width:100%;
-  border:none;
-  border-radius:12px;
-  padding:12px;
-  background:var(--pink);
-  font-size:15px;
-  cursor:pointer;
-}
-
-textarea {
-  width:100%;
-  border-radius:12px;
-  border:1px solid #ddd;
-  padding:10px;
-  font-size:14px;
-  resize:none;
-}
+#app { max-width:420px; margin:0 auto; padding:16px; }
+h2 { text-align:center; margin:10px 0 20px; }
+.card { background:var(--card); border-radius:var(--radius); padding:14px; margin-bottom:16px; box-shadow:0 6px 18px rgba(0,0,0,.06); }
+.calendar { display:flex; gap:8px; overflow-x:auto; }
+.day { min-width:64px; padding:10px; border-radius:12px; text-align:center; background:#eee; font-size:13px; cursor:pointer; }
+.day.active { background:var(--pink); font-weight:600; }
+.slot { padding:10px; border:1px solid #eee; border-radius:12px; margin:6px 0; cursor:pointer; }
+.slot.selected { background:var(--pink); color:#fff; font-weight:600; }
+.service { border:1px solid #eee; border-radius:14px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+button { width:100%; border:none; border-radius:12px; padding:12px; background:var(--pink); font-size:15px; cursor:pointer; }
+textarea { width:100%; border-radius:12px; border:1px solid #ddd; padding:10px; font-size:14px; resize:none; }
 </style>
 </head>
-
 <body>
 <div id="app">
 <h2>💅 Запись на ноготочки</h2>
@@ -110,78 +44,149 @@ textarea {
 </div>
 
 <div class="card">
-<h3>💸 Прайс</h3>
-
-<div class="service">
-<h4>Обработка</h4>
-<div class="price">1000₽</div>
-<div>Гигиенический маникюр без покрытия</div>
-<button onclick="selectService('Обработка',1000)">Выбрать</button>
+<h3>⏰ Доступные слоты</h3>
+<div id="slots"></div>
 </div>
 
-<div class="service">
-<h4>Комплекс #1</h4>
-<div class="price">2000₽</div>
-<div>Маникюр, покрытие, ремонт, простой дизайн</div>
-<button onclick="selectService('Комплекс #1',2000)">Выбрать</button>
-</div>
-
-<div class="service">
-<h4>Наращивание</h4>
-<div class="price">3000₽</div>
-<div>Средняя длина, лёгкий дизайн<br>+500₽ макс длина</div>
-<button onclick="selectService('Наращивание',3000)">Выбрать</button>
-</div>
-
-<div class="service">
-<h4>Комплекс #2</h4>
-<div class="price">2500₽</div>
-<div>Коррекция, ремонт, лёгкий дизайн</div>
-<button onclick="selectService('Комплекс #2',2500)">Выбрать</button>
-</div>
-
-<small>
-Френч / сложный дизайн +300₽<br>
-Снятие чужого покрытия +100₽
-</small>
+<div class="card">
+<h3>💸 Услуги</h3>
+<div id="services"></div>
+<div style="margin-top:10px; font-weight:600;">Итого: <span id="total">0</span>₽</div>
 </div>
 
 <div class="card">
 <h3>📝 Комментарий</h3>
-<textarea rows="3" placeholder="Пожелания, дизайн, длина..."></textarea>
+<textarea id="comment" rows="3" placeholder="Пожелания, дизайн, длина..."></textarea>
 </div>
 
-<button onclick="submit()">💖 Подтвердить запись</button>
+<button onclick="submitBooking()">💖 Подтвердить запись</button>
 </div>
 
 <script>
-const calendar = document.getElementById("calendar");
+const API = "http://localhost:3000";
+let selectedDate = null;
+let selectedSlotId = null;
+let selectedServices = [];
+let totalPrice = 0;
 
-for (let i=0;i<14;i++) {
+const calendar = document.getElementById("calendar");
+const slotsDiv = document.getElementById("slots");
+const servicesDiv = document.getElementById("services");
+const totalSpan = document.getElementById("total");
+const commentInput = document.getElementById("comment");
+
+// --- Календарь 14 дней ---
+for(let i=0;i<14;i++){
   const d = new Date();
   d.setDate(d.getDate()+i);
   const div=document.createElement("div");
   div.className="day";
   div.innerHTML=`${d.getDate()}<br>${["Вс","Пн","Вт","Ср","Чт","Пт","Сб"][d.getDay()]}`;
-  div.onclick=()=> {
-    document.querySelectorAll(".day").forEach(x=>x.classList.remove("active"));
-    div.classList.add("active");
-  }
+  div.onclick=()=>selectDate(d);
   calendar.appendChild(div);
 }
 
-function selectService(name,price){
-  alert(`Выбрано: ${name} — ${price}₽`);
+// --- Выбор дня ---
+function selectDate(d){
+  selectedDate = d.toISOString().split("T")[0];
+  document.querySelectorAll(".day").forEach(x=>x.classList.remove("active"));
+  event.currentTarget.classList.add("active");
+  fetchSlots();
 }
 
-function submit(){
-  Telegram.WebApp.showPopup({
-    title:"Готово 💅",
-    message:"Вы успешно записались",
-    buttons:[{type:"close"}]
+// --- Получение слотов с сервера ---
+async function fetchSlots(){
+  slotsDiv.innerHTML="Загрузка...";
+  const res = await fetch(`${API}/slots`);
+  const data = await res.json();
+  slotsDiv.innerHTML="";
+  const daySlots = data.filter(s => s.date===selectedDate);
+  if(daySlots.length===0){ slotsDiv.innerHTML="Нет доступных слотов"; return; }
+
+  daySlots.forEach(s=>{
+    const div=document.createElement("div");
+    div.className="slot";
+    div.innerText=s.time;
+    div.onclick=()=>selectSlot(s.id, div);
+    slotsDiv.appendChild(div);
   });
 }
-</script>
 
+// --- Выбор слота ---
+function selectSlot(id, div){
+  selectedSlotId = id;
+  document.querySelectorAll(".slot").forEach(x=>x.classList.remove("selected"));
+  div.classList.add("selected");
+}
+
+// --- Получение услуг ---
+async function fetchServices(){
+  const res = await fetch(`${API}/services`);
+  const data = await res.json();
+  servicesDiv.innerHTML="";
+  data.forEach(s=>{
+    const div=document.createElement("div");
+    div.className="service";
+    div.innerHTML=`<span>${s.name} — ${s.price}₽</span>`;
+    const btn = document.createElement("button");
+    btn.innerText="Выбрать";
+    btn.onclick=()=>toggleService(s, btn);
+    div.appendChild(btn);
+    servicesDiv.appendChild(div);
+  });
+}
+
+// --- Выбор/снятие услуги ---
+function toggleService(service, btn){
+  const index = selectedServices.findIndex(s=>s.id===service.id);
+  if(index===-1){
+    selectedServices.push(service);
+    btn.innerText="Снято";
+  }else{
+    selectedServices.splice(index,1);
+    btn.innerText="Выбрать";
+  }
+  totalPrice = selectedServices.reduce((a,b)=>a+b.price,0);
+  totalSpan.innerText=totalPrice;
+}
+
+// --- Подтверждение записи ---
+async function submitBooking(){
+  if(!selectedDate || !selectedSlotId){
+    alert("Выберите дату и слот");
+    return;
+  }
+  if(selectedServices.length===0){
+    alert("Выберите хотя бы одну услугу");
+    return;
+  }
+
+  const payload = {
+    slotId: selectedSlotId,
+    userId: 12345, // здесь Telegram ID
+    userName: "Ирина", // можно получить из Telegram.WebApp.initDataUnsafe
+    services: selectedServices.map(s=>s.name),
+    totalPrice,
+    comment: commentInput.value
+  };
+
+  const res = await fetch(`${API}/book`,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+  if(data.success){
+    Telegram.WebApp.showPopup({title:"Готово 💅", message:"Вы успешно записались", buttons:[{type:"close"}]});
+    fetchSlots(); // обновляем слоты
+  }else{
+    alert(data.error || "Ошибка бронирования");
+  }
+}
+
+// --- Инициализация ---
+fetchServices();
+</script>
 </body>
 </html>
