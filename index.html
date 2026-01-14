@@ -102,14 +102,17 @@
 // null → обычная логика
 // "admin" → принудительно админка
 // "client" → принудительно клиент
-let DEV_FORCE_ROLE = localStorage.getItem("devRole");
+let DEV_FORCE_ROLE = localStorage.getItem("devRole") || null;
 /* ============================================ */
 
 const tg = window.Telegram.WebApp;
 tg.expand();
-
-const user = tg.initDataUnsafe.user;
 const ADMIN_ID = 381232429;
+const user = tg.initDataUnsafe?.user || {
+  id: ADMIN_ID,
+  first_name: "DEV"
+};
+
 const API = "https://nails-backend-5knq.onrender.com";
 
 const content = document.getElementById("content");
