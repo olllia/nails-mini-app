@@ -45,6 +45,12 @@ header p { color: var(--secondary); margin: 4px 0 0; font-size: 14px; }
 .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--secondary); margin-bottom: 12px; padding-left: 2px; }
 .card { background: var(--card); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 20px; border: 1px solid var(--separator); }
 
+/* Stats Grid for Admin */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.stat-item { background: var(--soft-nude); padding: 15px; border-radius: 18px; text-align: center; }
+.stat-item span { display: block; font-size: 10px; color: var(--secondary); margin-bottom: 4px; text-transform: uppercase; }
+.stat-item b { font-size: 18px; font-weight: 700; }
+
 /* Calendar */
 .calendar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
 .calendar::-webkit-scrollbar { display: none; }
@@ -93,7 +99,7 @@ textarea {
 }
 
 /* Admin Styles */
-.admin-list-item { padding: 12px; border-bottom: 1px solid var(--separator); font-size: 13px; line-height: 1.5; }
+.admin-list-item { padding: 15px; border-bottom: 1px solid var(--separator); font-size: 13px; line-height: 1.5; }
 .bulk-textarea { font-family: 'Courier New', monospace; font-size: 12px; background: #1a1a1a; color: #a2fca2; border: none; }
 </style>
 </head>
@@ -132,18 +138,23 @@ textarea {
       <div class="total-amount"><span id="totalDisplay">0</span> ₽</div>
     </div>
 
-    <button class="btn-primary" onclick="submitBooking()">Записаться</button>
+    <button class="btn-primary" onclick="submitBooking()">Записаться 💖</button>
   </div>
 
   <div id="adminPanel" style="display:none;">
+    <div class="section-title">Аналитика бизнеса</div>
+    <div class="stats-grid">
+        <div class="stat-item"><span>Выручка</span><b id="statRevenue">0 ₽</b></div>
+        <div class="stat-item"><span>Ср. чек</span><b id="statAvg">0 ₽</b></div>
+    </div>
+
     <div class="section-title">Массовое расписание</div>
     <div class="card" style="background: #1a1a1a;">
-      <textarea id="bulkInput" class="bulk-textarea" rows="8" placeholder="04.01 11:00/13:00/15:00
-05.01 12:00/14:00"></textarea>
+      <textarea id="bulkInput" class="bulk-textarea" rows="6" placeholder="04.01 11:00/13:00/15:00"></textarea>
       <button class="btn-primary" style="margin-top:15px; background: #ffffff; color: #000;" onclick="handleBulkUpload()">Опубликовать окошки</button>
     </div>
     
-    <div class="section-title">Ближайшие записи</div>
+    <div class="section-title">История записей</div>
     <div class="card" id="adminAppointments" style="padding:0;"></div>
   </div>
 </div>
@@ -153,11 +164,9 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 tg.ready();
 
-// Настройки API
 const API = "https://nails-backend-5knq.onrender.com"; // ЗАМЕНИ НА СВОЙ URL
 const ADMIN_ID = 381232429;
 
-// Данные пользователя из ТГ
 const userId = tg.initDataUnsafe?.user?.id || 381232429;
 const userName = tg.initDataUnsafe?.user?.first_name || "Гость";
 
@@ -165,7 +174,6 @@ let selectedDate = null;
 let selectedSlotId = null;
 let selectedServices = [];
 
-// Инициализация
 document.getElementById("shopStatus").innerText = `Привет, ${userName}!`;
 
 // Переключение табов
@@ -177,87 +185,81 @@ function switchTab(mode) {
   document.getElementById("adminPanel").style.display = mode === 'admin' ? 'block' : 'none';
   document.getElementById("clientBtn").classList.toggle('active', mode === 'client');
   document.getElementById("adminBtn").classList.toggle('active', mode === 'admin');
-  if(mode === 'admin') fetchAdminData();
+  if(mode === 'admin') {
+      fetchAdminData();
+      loadStats();
+  }
 }
 
-// Рендер календаря
+// ICS Генератор (Календарь телефона)
+function downloadIcs(date, time, services) {
+  const [y, m, d] = date.split('-');
+  const [hh, mm] = time.split(':');
+  const startDate = `${y}${m}${d}T${hh}${mm}00`;
+  const icsMsg = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${startDate}\nSUMMARY:Маникюр у Насти 💅\nDESCRIPTION:Услуги: ${services}\nEND:VEVENT\nEND:VCALENDAR`;
+  const blob = new Blob([icsMsg], { type: 'text/calendar;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.setAttribute('download', 'appointment.ics');
+  link.click();
+}
+
+// Календарь
 const calendar = document.getElementById("calendar");
 const weekdays = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
 
 for (let i = 0; i < 14; i++) {
-  const d = new Date();
-  d.setDate(d.getDate() + i);
+  const d = new Date(); d.setDate(d.getDate() + i);
   const iso = d.toISOString().split('T')[0];
-  
   const div = document.createElement("div");
   div.className = "day";
   div.innerHTML = `<span>${weekdays[d.getDay()]}</span><b>${d.getDate()}</b>`;
   div.onclick = () => {
     document.querySelectorAll(".day").forEach(el => el.classList.remove("active"));
-    div.classList.add("active");
-    selectedDate = iso;
-    loadSlots(iso);
+    div.classList.add("active"); selectedDate = iso; loadSlots(iso);
   };
   calendar.appendChild(div);
 }
 
-// Загрузка слотов
+// Слоты
 async function loadSlots(date) {
   const container = document.getElementById("slots");
-  container.innerHTML = "<div style='grid-column:1/4; padding:20px;'>Загрузка...</div>";
-  
+  container.innerHTML = "<div style='grid-column:1/4; padding:20px;'>...</div>";
   try {
     const res = await fetch(`${API}/slots`);
     const data = await res.json();
     const daySlots = data.filter(s => s.date === date);
-    
     container.innerHTML = "";
     if(daySlots.length === 0) {
-      container.innerHTML = "<div style='grid-column:1/4; color:var(--secondary); padding:20px;'>Свободных мест нет</div>";
+      container.innerHTML = "<div style='grid-column:1/4; color:var(--secondary); padding:20px;'>Мест нет</div>";
       return;
     }
-    
     daySlots.forEach(s => {
       const btn = document.createElement("div");
-      btn.className = "slot";
-      btn.innerText = s.time;
+      btn.className = "slot"; btn.innerText = s.time;
       btn.onclick = () => {
         document.querySelectorAll(".slot").forEach(el => el.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedSlotId = s.id;
+        btn.classList.add("selected"); selectedSlotId = s.id;
       };
       container.appendChild(btn);
     });
-  } catch(e) { container.innerHTML = "Ошибка связи с сервером"; }
+  } catch(e) { container.innerHTML = "Ошибка API"; }
 }
 
-// Загрузка услуг
+// Услуги
 async function loadServices() {
   const res = await fetch(`${API}/services`);
   const data = await res.json();
   const container = document.getElementById("servicesContainer");
-  
   data.forEach(s => {
     const item = document.createElement("div");
     item.className = "service-item";
-    item.innerHTML = `
-      <div>
-        <div class="service-name">${s.name}</div>
-        <div class="service-price">${s.price} ₽ — ${s.desc}</div>
-      </div>
-      <div class="checkbox"></div>
-    `;
+    item.innerHTML = `<div><div class="service-name">${s.name}</div><div class="service-price">${s.price} ₽</div></div><div class="checkbox"></div>`;
     item.onclick = () => {
       const idx = selectedServices.findIndex(srv => srv.id === s.id);
-      if(idx === -1) {
-        selectedServices.push(s);
-        item.classList.add("active");
-      } else {
-        selectedServices.splice(idx, 1);
-        item.classList.remove("active");
-      }
-      const total = selectedServices.reduce((sum, srv) => sum + srv.price, 0);
-      document.getElementById("totalDisplay").innerText = total;
+      if(idx === -1) { selectedServices.push(s); item.classList.add("active"); }
+      else { selectedServices.splice(idx, 1); item.classList.remove("active"); }
+      document.getElementById("totalDisplay").innerText = selectedServices.reduce((sum, srv) => sum + srv.price, 0);
     };
     container.appendChild(item);
   });
@@ -265,37 +267,37 @@ async function loadServices() {
 
 // Бронирование
 async function submitBooking() {
-  if(!selectedSlotId) return tg.showAlert("Выберите время визита");
-  if(selectedServices.length === 0) return tg.showAlert("Выберите хотя бы одну услугу");
+  if(!selectedSlotId) return tg.showAlert("Выберите время!");
+  if(selectedServices.length === 0) return tg.showAlert("Выберите услугу!");
 
   const total = parseInt(document.getElementById("totalDisplay").innerText);
-  
-  tg.MainButton.setText("Подтверждаем...").show();
+  tg.MainButton.setText("Оформляем...").show();
   
   try {
     const res = await fetch(`${API}/book`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        slotId: selectedSlotId,
-        userId,
-        userName,
+        slotId: selectedSlotId, userId, userName,
         services: selectedServices.map(s => s.name),
-        totalPrice: total,
-        comment: document.getElementById("comment").value
+        totalPrice: total, comment: document.getElementById("comment").value
       })
     });
     
     if(res.ok) {
       tg.showPopup({
-        title: "Запись создана",
-        message: "Мастер свяжется с вами для подтверждения!",
-        buttons: [{type: "close"}]
-      }, () => tg.close());
-    } else {
-      tg.showAlert("Упс! Этот слот уже заняли.");
+        title: "Запись подтверждена!",
+        message: "Добавить встречу в календарь телефона?",
+        buttons: [{id: 'ics', type: 'default', text: '🗓 Добавить'}, {type: 'close', text: 'Нет'}]
+      }, (btnId) => {
+        if(btnId === 'ics') {
+          const slotTime = document.querySelector(".slot.selected").innerText;
+          downloadIcs(selectedDate, slotTime, selectedServices.map(s => s.name).join(", "));
+        }
+        tg.close();
+      });
     }
-  } catch(e) { tg.showAlert("Ошибка сервера"); }
+  } catch(e) { tg.showAlert("Ошибка!"); }
   finally { tg.MainButton.hide(); }
 }
 
@@ -304,46 +306,39 @@ async function handleBulkUpload() {
   const text = document.getElementById("bulkInput").value;
   const lines = text.split('\n').filter(l => l.trim());
   const payload = [];
-
   lines.forEach(line => {
     const match = line.match(/(\d{2}\.\d{2})\s+(.+)/);
     if(match) {
       const times = match[2].split('/');
       const [day, month] = match[1].split('.');
-      const isoDate = `${new Date().getFullYear()}-${month}-${day}`;
-      times.forEach(t => payload.push({date: isoDate, time: t.trim()}));
+      payload.push(...times.map(t => ({date: `${new Date().getFullYear()}-${month}-${day}`, time: t.trim()})));
     }
   });
-
-  if(payload.length === 0) return alert("Формат не распознан");
-
   const res = await fetch(`${API}/slots/bulk`, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
+    method: "POST", headers: {"Content-Type": "application/json"},
     body: JSON.stringify({ slots: payload })
   });
-
-  if(res.ok) {
-    alert(`Опубликовано ${payload.length} окошек!`);
-    document.getElementById("bulkInput").value = "";
-  }
+  if(res.ok) { alert("Опубликовано!"); document.getElementById("bulkInput").value = ""; }
 }
 
-// Админка: список записей
+// Админка: Статистика
+async function loadStats() {
+    const res = await fetch(`${API}/stats`);
+    const data = await res.json();
+    document.getElementById("statRevenue").innerText = `${data.revenue} ₽`;
+    document.getElementById("statAvg").innerText = `${data.avg} ₽`;
+}
+
+// Админка: История
 async function fetchAdminData() {
   const res = await fetch(`${API}/appointments/${userId}`);
   const data = await res.json();
   const container = document.getElementById("adminAppointments");
-  container.innerHTML = data.length ? "" : "<div style='padding:20px; color:var(--secondary);'>Записей пока нет</div>";
-  
+  container.innerHTML = data.length ? "" : "<div style='padding:20px;'>Записей нет</div>";
   data.reverse().forEach(a => {
     const item = document.createElement("div");
     item.className = "admin-list-item";
-    item.innerHTML = `
-      <b>${a.date} | ${a.time}</b><br>
-      ${a.user_name} — ${a.total_price} ₽<br>
-      <span style="color:var(--secondary)">${a.services}</span>
-    `;
+    item.innerHTML = `<b>${a.date} в ${a.time}</b><br>${a.user_name} — ${a.total_price} ₽<br><span style="color:var(--secondary)">${a.services}</span>`;
     container.appendChild(item);
   });
 }
