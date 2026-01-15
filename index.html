@@ -21,13 +21,33 @@
 
 body {
   margin: 0;
+  padding: 0;
   font-family: 'Manrope', sans-serif;
   color: #272A2A;
-  /* Твое изображение на фоне */
-  background: url('https://pin.it/4BCPgMqUk') no-repeat center center fixed;
+  
+  /* 1. Сначала задаем мягкий градиент (подстраховка) */
+  background: linear-gradient(135deg, #fdf0f0 0%, #e6e6fa 100%);
+  
+  /* 2. Накладываем твою картинку */
+  /* fixed важен, чтобы фон не уезжал при скролле */
+  background-image: url('./bg.jpg'); 
+  background-repeat: no-repeat;
+  background-position: center;
   background-size: cover;
+  background-attachment: fixed;
+
   min-height: 100vh;
-  line-height: 1.4;
+}
+
+/* Добавим легкий шум поверх, чтобы даже обычное фото выглядело как на референсах */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: url('https://grainy-gradients.vercel.app/noise.svg');
+  opacity: 0.05; /* Еле заметная зернистость */
+  pointer-events: none;
+  z-index: 1;
 }
 
 #app { max-width: 420px; margin: 0 auto; padding: 20px; }
