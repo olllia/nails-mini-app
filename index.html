@@ -89,6 +89,13 @@
         <div class="section-title">3. Услуги</div>
         <div class="glass-card" id="srvList"></div>
 
+        <div class="section-title">4. Комментарий к записи</div>
+          <div class="glass-card">
+              <textarea id="cliComment" placeholder="Напиши пожелания (дизайн, длина, старое снятие...)" 
+                  style="width: 100%; border: none; outline: none; font-family: inherit; font-size: 14px; resize: none; background: transparent;" 
+                  rows="3"></textarea>
+          </div>
+
         <div class="glass-card">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-weight: 800; opacity: 0.6;">ИТОГО:</span>
@@ -218,8 +225,15 @@
                 dayApps.forEach(a => {
                     const d = document.createElement('div');
                     d.className = 'glass-card client-card';
-                    d.innerHTML = `<b>${a.time} — ${a.user_name}</b><div style="font-size:12px;opacity:0.7">${a.services}</div>`;
-                    cont.appendChild(d);
+// Найди внутри функции showAdminDay строчку, где создается карточка клиента, и замени на эту:
+                    d.innerHTML = `
+                        <div style="display:flex; justify-content:space-between;">
+                            <b>${a.time} — ${a.user_name}</b>
+                            <span style="color:var(--primary)">${a.total_price}₽</span>
+                        </div>
+                        <div style="font-size:12px; opacity:0.7; margin-top:5px;">${a.services}</div>
+                        ${a.comment ? `<div style="font-size:12px; color:var(--accent); margin-top:5px; font-style:italic;">💬 ${a.comment}</div>` : ''}
+                    `;
                 });
             }
 
@@ -267,19 +281,38 @@
         }
 
         async function submitBooking() {
-            if(!selSlot) return tg.showAlert("Выбери время!");
-            const res = await fetch(`${API}/book`, {
-                method:"POST",
-                headers:{"Content-Type":"application/json"},
-                body:JSON.stringify({
-                    slotId: selSlot,
-                    userId: tg.initDataUnsafe?.user?.id || 0,
-                    userName: tg.initDataUnsafe?.user?.first_name || "Guest",
-                    services: selServices.map(s => s.name),
-                    totalPrice: document.getElementById('total').innerText
-                })
-            });
-            if(res.ok) { tg.showAlert("Запись прошла! ✨"); tg.close(); }
+            if (!selSlot) return tg.showAlert("Выбери время! ⏰");
+            if (selServices.length === 0) return tg.showAlert("Выбери хотя бы одну услугу! 💅");
+
+            const commentText = document.getElementById('cliComment').value;
+
+            const data = {
+                slotId: selSlot,
+                userId: tg.initDataUnsafe?.user?.id || 0,
+                userName: tg.initDataUnsafe?.user?.first_name || "Клиент",
+                username: tg.initDataUnsafe?.user?.username || "", // Тот самый @username для связи
+                services: selServices.map(s => s.name),
+                totalPrice: document.getElementById('total').innerText,
+                comment: commentText // Отправляем коммент на сервер
+            };
+
+            try {
+                const res = await fetch(`${API}/book`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    tg.showAlert("Ура! Запись прошла успешно ✨ Жду тебя!");
+                    tg.close();
+                } else {
+                    const err = await res.json();
+                    tg.showAlert("Ошибка: " + err.error);
+                }
+            } catch (e) {
+                tg.showAlert("Сервер временно недоступен 😩");
+            }
         }
 
         function switchTab(mode) {
