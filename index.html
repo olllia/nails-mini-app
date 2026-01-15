@@ -3,347 +3,453 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Nails & Aesthetic</title>
+<title>NNAILLSS</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-/* Подключаем стильный шрифт */
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap');
 
 :root {
-  --primary: #1A1AA7;    /* Глубокий синий */
-  --accent: #F295A0;     /* Пыльная роза */
-  --bg-color: #f0f0f0;
-  --glass: rgba(255, 255, 255, 0.85);
-  --radius: 24px;
+  --primary: #1A1AA7; 
+  --accent: #F295A0;  
+  --bg: #F7F3E6;
+  --glass: rgba(255, 255, 255, 0.75);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Manrope', sans-serif;
-  color: #272A2A;
-  
-  /* 1. Сначала задаем мягкий градиент (подстраховка) */
-  background: linear-gradient(135deg, #fdf0f0 0%, #e6e6fa 100%);
-  
-  /* 2. Накладываем твою картинку */
-  /* fixed важен, чтобы фон не уезжал при скролле */
-  background-image: ('/Users/ooolya/nails-mini-app/2026-01-15 10.25.49 PM.jpg'); 
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  background-attachment: fixed;
-
-  min-height: 100vh;
+  margin: 0; font-family: 'Manrope', sans-serif; color: var(--primary);
+  background: radial-gradient(at 0% 0%, rgba(242, 149, 160, 0.3) 0px, transparent 50%),
+              radial-gradient(at 100% 100%, rgba(26, 26, 167, 0.2) 0px, transparent 50%),
+              var(--bg);
+  background-attachment: fixed; min-height: 100vh;
 }
 
-/* Добавим легкий шум поверх, чтобы даже обычное фото выглядело как на референсах */
 body::before {
-  content: "";
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
+  content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: url('https://grainy-gradients.vercel.app/noise.svg');
-  opacity: 0.05; /* Еле заметная зернистость */
-  pointer-events: none;
-  z-index: 1;
+  opacity: 0.12; pointer-events: none; z-index: 1;
 }
 
-#app { max-width: 420px; margin: 0 auto; padding: 20px; }
+#app { max-width: 420px; margin: 0 auto; padding: 20px; position: relative; z-index: 2; }
 
-/* Хедер */
-header { text-align: center; margin-bottom: 30px; padding-top: 10px; }
-header h1 { font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.5px; color: var(--primary); }
-.master-link { 
-  display: inline-block; margin-top: 8px; color: white; text-decoration: none; 
-  font-size: 13px; background: var(--primary); padding: 6px 14px; border-radius: 20px; font-weight: 600;
-}
+header { text-align: center; margin-bottom: 30px; }
+header h1 { font-size: 46px; font-weight: 800; margin: 0; letter-spacing: 6px; color: var(--primary); }
 
-/* Переключатель */
-.tabs { display: flex; background: rgba(0,0,0,0.06); padding: 4px; border-radius: 16px; margin-bottom: 25px; }
-.tabs button { 
-  flex: 1; border: none; padding: 10px; border-radius: 12px; font-size: 14px; 
-  font-weight: 600; cursor: pointer; background: transparent; color: #666; transition: 0.3s;
-}
-.tabs button.active { background: white; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.tabs { display: flex; background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); padding: 5px; border-radius: 20px; margin-bottom: 25px; }
+.tabs button { flex: 1; border: none; padding: 12px; border-radius: 16px; font-size: 13px; font-weight: 800; background: transparent; color: var(--primary); opacity: 0.5; cursor: pointer; }
+.tabs button.active { background: white; opacity: 1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
-/* Карточки */
-.glass-card {
-  background: var(--glass);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 20px;
-}
+.glass-card { background: var(--glass); backdrop-filter: blur(15px); border-radius: 30px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.4); }
+.section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin: 0 0 15px 5px; }
 
-.section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin: 0 0 12px 5px; opacity: 0.8; }
+.cal-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+.day-btn { min-width: 58px; padding: 18px 5px; border-radius: 22px; text-align: center; background: white; cursor: pointer; border: 1.5px solid transparent; }
+.day-btn.active { background: var(--primary); color: white; }
+.day-btn span { display: block; font-size: 11px; opacity: 0.7; margin-bottom: 4px; }
+.day-btn b { font-size: 18px; font-weight: 800; }
 
-/* Календарь */
-.calendar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-.calendar::-webkit-scrollbar { display: none; }
-.day { 
-  min-width: 60px; padding: 15px 5px; border-radius: 20px; text-align: center; 
-  background: var(--glass); border: 1.5px solid transparent; transition: 0.2s;
-}
-.day span { display: block; font-size: 10px; opacity: 0.6; margin-bottom: 4px; }
-.day b { font-size: 18px; }
-.day.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-/* Слоты */
 .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.slot { 
-  padding: 14px; border-radius: 16px; text-align: center; 
-  font-size: 14px; font-weight: 600; background: var(--glass); cursor: pointer; border: 1.5px solid transparent;
+.slot { padding: 14px; border-radius: 50px; text-align: center; font-weight: 800; background: white; border: 2.5px solid transparent; cursor: pointer; }
+.slot.selected { border-color: var(--primary); color: var(--primary); background: transparent; }
+
+.srv-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(26,26,167,0.06); cursor: pointer;}
+.srv-check { width: 26px; height: 26px; border: 3px solid var(--primary); border-radius: 10px; position: relative; }
+.srv-item.active .srv-check { background: var(--primary); }
+.srv-item.active .srv-check::after { content: '✓'; color: white; position: absolute; left: 4px; top: -2px; font-weight: 800; }
+
+textarea { width: 100%; border: none; border-radius: 20px; padding: 15px; font-family: inherit; background: rgba(255,255,255,0.4); resize: none; color: var(--primary); font-weight: 600; margin-bottom: 20px; }
+.btn-main { width: 100%; background: var(--primary); color: white; border: none; border-radius: 50px; padding: 22px; font-size: 17px; font-weight: 800; cursor: pointer; }
+
+/* Стиль ячеек админки */
+/* Сетка календаря */
+.adm-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 колонок */
+    gap: 8px;
+    padding: 10px;
 }
-.slot.selected { border-color: var(--primary); background: white; color: var(--primary); }
 
-/* Услуги */
-.service-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
-.service-item:last-child { border: none; }
-.checkbox { width: 22px; height: 22px; border: 2.5px solid var(--primary); border-radius: 8px; transition: 0.2s; }
-.service-item.active .checkbox { background: var(--primary); position: relative; }
-.service-item.active .checkbox::after { content: '✓'; color: white; font-size: 14px; position: absolute; left: 3px; top: -2px; }
-
-/* Поле ввода */
-textarea { 
-  width: 100%; border: none; border-radius: 16px; padding: 15px; 
-  font-family: inherit; font-size: 14px; background: rgba(255,255,255,0.6); resize: none;
+/* Стиль ячейки дня */
+.admin-day {
+    aspect-ratio: 1 / 1; /* Делает ячейки квадратными */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px; /* Округлые углы как на референсе */
+    background: #ffffff;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(0,0,0,0.03);
 }
 
-/* Кнопка */
-.btn-primary { 
-  width: 100%; background: var(--primary); color: white; border: none; border-radius: 20px; 
-  padding: 20px; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s;
-  box-shadow: 0 10px 25px rgba(26, 26, 167, 0.25);
+/* Эффект при нажатии */
+.admin-day:active {
+    transform: scale(0.9);
 }
-.btn-primary:active { transform: scale(0.96); }
 
-/* Админка */
-.admin-list-item { padding: 15px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; }
-.stat-box { display: flex; gap: 10px; margin-bottom: 20px; }
-.stat-card { flex: 1; background: var(--primary); color: white; padding: 15px; border-radius: 20px; text-align: center; }
+/* Точка под числом */
+.day-dot {
+    width: 4px;
+    height: 4px;
+    background: #1A1AA7; /* Синий цвет как в лого */
+    border-radius: 50%;
+    position: absolute;
+    bottom: 6px;
+}
 </style>
 </head>
-<body onclick="document.activeElement.blur()">
+<body>
 
 <div id="app">
-  <header>
-    <h1>Nails & Aesthetic</h1>
-    <a href="https://t.me/nnstmlll" class="master-link">мастер: @nnstmlll</a>
-  </header>
+    <header>
+        <h1>NNAILLSS</h1>
+        <div style="font-weight: 800; opacity: 0.8; font-size: 14px;">master: @nnstmlll</div>
+    </header>
 
-  <div class="tabs">
-    <button id="clientBtn" class="active">Запись</button>
-    <button id="adminBtn">Управление</button>
-  </div>
-
-  <div id="clientPanel">
-    <div class="section-title">1. Выберите дату</div>
-    <div class="calendar" id="calendar"></div>
-
-    <div class="section-title" style="margin-top:25px;">2. Свободное время</div>
-    <div id="slots" class="slots-grid">
-      <div style="grid-column:1/4; font-size:14px; opacity:0.5; padding:20px; text-align:center;">Сначала выберите дату</div>
+    <div class="tabs">
+        <button id="tab-client" class="active">ЗАПИСЬ</button>
+        <button id="tab-admin">УПРАВЛЕНИЕ</button>
     </div>
 
-    <div class="section-title" style="margin-top:25px;">3. Услуги</div>
-    <div class="glass-card" id="servicesContainer"></div>
-
-    <div class="section-title">4. Комментарий</div>
-    <div class="glass-card" style="padding: 10px;">
-      <textarea id="comment" rows="2" placeholder="Ваши пожелания..." onclick="event.stopPropagation()"></textarea>
+    <div id="panel-client">
+      <div class="section-title">1. Выбери дату (с точками — есть места)</div>
+      <div class="glass-card">
+          <div id="clientMonth" style="text-align:center; font-weight:800; margin-bottom:15px; text-transform:uppercase; letter-spacing:2px;"></div>
+          <div class="adm-grid" id="clientGrid"></div> </div>
+      
+      <div class="section-title" style="margin-top:25px;">2. Время</div>
+      <div id="slotsGrid" class="slots-grid">
+          <div style="grid-column:1/4; text-align:center; opacity:0.5; padding:20px;">Выбери дату в календаре</div>
+      </div>
+        <div class="section-title" style="margin-top:25px;">3. Услуги</div>
+        <div class="glass-card" id="srvList" style="margin-top:0;"></div>
+        <div class="section-title">4. Комментарий</div>
+        <textarea id="comment" rows="2" placeholder="Дизайн, пожелания..."></textarea>
+        <div style="text-align:center; margin: 30px 0;">
+            <div style="font-size: 10px; font-weight: 800; opacity: 0.6; letter-spacing: 1.5px;">СУММА</div>
+            <div style="font-size: 52px; font-weight: 800;"><span id="total">0</span> ₽</div>
+        </div>
+        <button class="btn-main" onclick="submitBooking()">ЗАПИСАТЬСЯ ✨</button>
     </div>
 
-    <div style="text-align:center; margin: 30px 0;">
-      <div style="font-size: 12px; opacity: 0.6; font-weight: 700; letter-spacing: 1px;">ИТОГО</div>
-      <div style="font-size: 36px; font-weight: 800; color: var(--primary);"><span id="totalDisplay">0</span> ₽</div>
+    <div id="panel-admin" style="display:none;">
+        <div class="section-title">Календарь управления</div>
+        <div class="glass-card">
+            <div id="admMonth" style="text-align:center; font-weight:800; margin-bottom:15px; text-transform:uppercase; letter-spacing:2px;"></div>
+            <div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:8px;" id="admGrid"></div>
+        </div>
+        <div id="dayDetails" style="display:none;">
+            <div class="section-title" id="selectedDateTitle">События</div>
+            <div id="dayContent"></div>
+        </div>
     </div>
-
-    <button class="btn-primary" onclick="submitBooking()">Записаться ✨</button>
-  </div>
-
-  <div id="adminPanel" style="display:none;">
-    <div class="stat-box">
-        <div class="stat-card"><small>Выручка</small><br><b id="statRevenue">0 ₽</b></div>
-        <div class="stat-card"><small>Ср. чек</small><br><b id="statAvg">0 ₽</b></div>
-    </div>
-    
-    <div class="section-title">Добавить окошки</div>
-    <div class="glass-card" style="background: #1a1a1a;">
-      <textarea id="bulkInput" style="background:transparent; color:#00ff00; font-family:monospace;" rows="4" placeholder="15.01 10:00/12:00/14:00" onclick="event.stopPropagation()"></textarea>
-      <button class="btn-primary" style="margin-top:15px; background:white; color:black;" onclick="handleBulkUpload()">Опубликовать</button>
-    </div>
-
-    <div class="section-title">Список записей</div>
-    <div class="glass-card" id="adminAppointments" style="padding:0;"></div>
-  </div>
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-// Настройки
-const API = "https://nails-backend-5knq.onrender.com"; // ЗАМЕНИ НА СВОЙ
+const API = "https://nails-backend-5knq.onrender.com"; 
 const ADMIN_ID = 381232429;
-const userId = tg.initDataUnsafe?.user?.id || 381232429;
-const userName = tg.initDataUnsafe?.user?.first_name || "Гость";
 
-let selectedDate = null;
-let selectedSlotId = null;
-let selectedServices = [];
+// Глобальное состояние
+let state = {
+    allApps: [],
+    allSlots: []
+};
 
-// Переключение табов (Исправлено)
-document.getElementById("clientBtn").onclick = (e) => { e.stopPropagation(); switchTab('client'); };
-document.getElementById("adminBtn").onclick = (e) => { e.stopPropagation(); switchTab('admin'); };
+let selDate = null;
+let selSlot = null;
+let selServices = [];
+
+// Сетка времени для Насти
+const TIME_PRESETS = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
+
+// --- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ---
+document.getElementById('tab-client').onclick = () => switchTab('client');
+document.getElementById('tab-admin').onclick = () => switchTab('admin');
 
 function switchTab(mode) {
-  document.getElementById("clientPanel").style.display = mode === 'client' ? 'block' : 'none';
-  document.getElementById("adminPanel").style.display = mode === 'admin' ? 'block' : 'none';
-  document.getElementById("clientBtn").classList.toggle('active', mode === 'client');
-  document.getElementById("adminBtn").classList.toggle('active', mode === 'admin');
-  if(mode === 'admin') { loadStats(); fetchAdminData(); }
+    document.getElementById('panel-client').style.display = mode === 'client' ? 'block' : 'none';
+    document.getElementById('panel-admin').style.display = mode === 'admin' ? 'block' : 'none';
+    document.getElementById('tab-client').classList.toggle('active', mode === 'client');
+    document.getElementById('tab-admin').classList.toggle('active', mode === 'admin');
+    if(mode === 'admin') loadAdminData();
 }
 
-// Календарь
-const calendar = document.getElementById("calendar");
-const weekdays = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+// --- ЛОГИКА КЛИЕНТА ---
+const calRow = document.getElementById('calRow');
+const days = ["Вс","Пн","Вт","Ср","Чт","Пт","Сб"];
 
-for (let i = 0; i < 14; i++) {
-  const d = new Date(); d.setDate(d.getDate() + i);
-  const iso = d.toISOString().split('T')[0];
-  const div = document.createElement("div");
-  div.className = "day";
-  div.innerHTML = `<span>${weekdays[d.getDay()]}</span><b>${d.getDate()}</b>`;
-  div.onclick = (e) => {
-    e.stopPropagation();
-    document.querySelectorAll(".day").forEach(el => el.classList.remove("active"));
-    div.classList.add("active");
-    selectedDate = iso;
-    loadSlots(iso);
-  };
-  calendar.appendChild(div);
-}
+// --- НОВАЯ ЛОГИКА КАЛЕНДАРЯ КЛИЕНТА ---
 
-// Загрузка слотов
-async function loadSlots(date) {
-  const container = document.getElementById("slots");
-  container.innerHTML = "<div style='grid-column:1/4; padding:20px; text-align:center;'>...</div>";
-  try {
+async function initClientCalendar() {
+    // Сначала грузим все слоты, чтобы знать, где ставить точки
     const res = await fetch(`${API}/slots`);
-    const data = await res.json();
-    const daySlots = data.filter(s => s.date === date);
-    container.innerHTML = "";
-    if(daySlots.length === 0) {
-      container.innerHTML = "<div style='grid-column:1/4; opacity:0.5; padding:20px; text-align:center;'>Нет окошек на эту дату</div>";
-      return;
-    }
-    daySlots.forEach(s => {
-      const btn = document.createElement("div");
-      btn.className = "slot"; btn.innerText = s.time;
-      btn.onclick = (e) => {
-        e.stopPropagation();
-        document.querySelectorAll(".slot").forEach(el => el.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedSlotId = s.id;
-      };
-      container.appendChild(btn);
-    });
-  } catch(e) { container.innerHTML = "Ошибка связи"; }
+    state.allSlots = await res.json();
+    renderClientCalendar();
 }
 
-// Загрузка услуг
-async function loadServices() {
-  const res = await fetch(`${API}/services`);
-  const data = await res.json();
-  const container = document.getElementById("servicesContainer");
-  data.forEach(s => {
-    const item = document.createElement("div");
-    item.className = "service-item";
-    item.innerHTML = `<div><div style="font-weight:700;">${s.name}</div><div style="font-size:12px; opacity:0.6;">${s.price} ₽</div></div><div class="checkbox"></div>`;
-    item.onclick = (e) => {
-      e.stopPropagation();
-      const idx = selectedServices.findIndex(srv => srv.id === s.id);
-      if(idx === -1) { selectedServices.push(s); item.classList.add("active"); }
-      else { selectedServices.splice(idx, 1); item.classList.remove("active"); }
-      document.getElementById("totalDisplay").innerText = selectedServices.reduce((sum, srv) => sum + srv.price, 0);
-    };
-    container.appendChild(item);
-  });
-}
-
-// Бронирование (Логика сохранена)
-async function submitBooking() {
-  if(!selectedSlotId) return tg.showAlert("Пожалуйста, выберите время");
-  if(selectedServices.length === 0) return tg.showAlert("Выберите хотя бы одну услугу");
-
-  const total = parseInt(document.getElementById("totalDisplay").innerText);
-  tg.MainButton.show();
-  tg.MainButton.setText("ПОДТВЕРЖДАЕМ...");
-
-  try {
-    const res = await fetch(`${API}/book`, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        slotId: selectedSlotId, userId, userName,
-        services: selectedServices.map(s => s.name),
-        totalPrice: total, comment: document.getElementById("comment").value
-      })
-    });
+function renderClientCalendar() {
+    const grid = document.getElementById('clientGrid');
+    if(!grid) return;
+    grid.innerHTML = "";
     
-    if(res.ok) {
-        tg.showPopup({ title: "Успех!", message: "Вы записаны. Мастер скоро свяжется с вами.", buttons: [{type: "close"}] }, () => tg.close());
-    } else {
-        tg.showAlert("Этот слот уже заняли!");
+    const now = new Date();
+    document.getElementById('clientMonth').innerText = now.toLocaleString('ru', {month:'long'});
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+    
+    for(let i = 1; i <= daysInMonth; i++) {
+        const dStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+        
+        // Проверяем, есть ли свободные (не booked) слоты на эту дату
+        const hasFreeSlots = state.allSlots.some(s => s.date === dStr && s.booked === 0);
+        const isPast = new Date(dStr) < new Date().setHours(0,0,0,0); // Чтобы не записывались на вчера
+        
+        const el = document.createElement('div');
+        el.className = 'admin-day'; // Используем тот же стиль
+        el.style.cssText = `
+            padding: 12px 0; border-radius: 15px; background: white; text-align: center; 
+            font-weight: 800; font-size: 14px; cursor: pointer; position: relative;
+            ${isPast ? 'opacity: 0.3; pointer-events: none;' : ''}
+        `;
+        
+        el.innerHTML = i;
+
+        // Если есть свободные места — ставим точку
+        if (hasFreeSlots) {
+            const dot = document.createElement('div');
+            dot.style.cssText = "width:5px; height:5px; background:var(--primary); border-radius:50%; position:absolute; bottom:4px; left:50%; transform:translateX(-50%);";
+            el.appendChild(dot);
+            
+            el.onclick = () => {
+                // Подсвечиваем выбранную дату
+                document.querySelectorAll('#clientGrid .admin-day').forEach(d => d.style.background = 'white');
+                el.style.background = 'var(--primary)';
+                el.style.color = 'white';
+                selDate = dStr;
+                renderClientSlots(dStr);
+            };
+        } else {
+            el.style.color = '#ccc'; // Нет мест — серый цвет
+        }
+        
+        grid.appendChild(el);
     }
-  } catch(e) { tg.showAlert("Ошибка сервера"); }
-  finally { tg.MainButton.hide(); }
 }
 
-// Админка
-async function loadStats() {
-    const res = await fetch(`${API}/stats`);
+function renderClientSlots(date) {
+    const grid = document.getElementById('slotsGrid');
+    grid.innerHTML = "";
+    
+    const filtered = state.allSlots.filter(s => s.date === date && s.booked === 0);
+    
+    if (filtered.length === 0) {
+        grid.innerHTML = "<div style='grid-column:1/4; text-align:center; padding:20px; opacity:0.5;'>Мест нет</div>";
+        return;
+    }
+
+    filtered.forEach(s => {
+        const d = document.createElement('div');
+        d.className = 'slot'; 
+        d.innerText = s.time;
+        d.onclick = () => {
+            document.querySelectorAll('.slot').forEach(el => el.classList.remove('selected'));
+            d.classList.add('selected');
+            selSlot = s.id;
+        };
+        grid.appendChild(d);
+    });
+}
+
+async function loadSlots(date) {
+    const grid = document.getElementById('slotsGrid');
+    grid.innerHTML = "Загрузка...";
+    try {
+        const res = await fetch(`${API}/slots`);
+        const slots = await res.json();
+        const filtered = slots.filter(s => s.date === date && s.booked === 0);
+        grid.innerHTML = filtered.length ? "" : "<div style='grid-column:1/4; text-align:center; padding:20px; opacity:0.5;'>Нет мест</div>";
+        filtered.forEach(s => {
+            const d = document.createElement('div');
+            d.className = 'slot'; d.innerText = s.time;
+            d.onclick = () => {
+                document.querySelectorAll('.slot').forEach(el => el.classList.remove('selected'));
+                d.classList.add('selected');
+                selSlot = s.id;
+            };
+            grid.appendChild(d);
+        });
+    } catch(e) { grid.innerHTML = "Ошибка загрузки"; }
+}
+
+async function loadServices() {
+    const res = await fetch(`${API}/services`);
     const data = await res.json();
-    document.getElementById("statRevenue").innerText = `${data.revenue} ₽`;
-    document.getElementById("statAvg").innerText = `${data.avg} ₽`;
+    const cont = document.getElementById('srvList');
+    data.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'srv-item';
+        item.innerHTML = `<div><div style="font-weight:800">${s.name}</div><div style="font-size:12px;opacity:0.6">${s.price} ₽</div></div><div class="srv-check"></div>`;
+        item.onclick = () => {
+            const idx = selServices.findIndex(x => x.id === s.id);
+            if(idx === -1) { selServices.push(s); item.classList.add('active'); }
+            else { selServices.splice(idx, 1); item.classList.remove('active'); }
+            document.getElementById('total').innerText = selServices.reduce((a,b) => a+b.price, 0);
+        };
+        cont.appendChild(item);
+    });
 }
 
-async function fetchAdminData() {
-  const res = await fetch(`${API}/appointments/${userId}`);
-  const data = await res.json();
-  const container = document.getElementById("adminAppointments");
-  container.innerHTML = data.length ? "" : "<div style='padding:20px; opacity:0.5;'>Записей нет</div>";
-  data.reverse().forEach(a => {
-    const item = document.createElement("div");
-    item.className = "admin-list-item";
-    item.innerHTML = `<b>${a.date} в ${a.time}</b><br>${a.user_name} — ${a.total_price} ₽<br><span style="opacity:0.6">${a.services}</span>`;
-    container.appendChild(item);
-  });
+async function submitBooking() {
+    if(!selSlot) return tg.showAlert("Выбери время!");
+    const res = await fetch(`${API}/book`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            slotId: selSlot,
+            userId: tg.initDataUnsafe?.user?.id || 0,
+            userName: tg.initDataUnsafe?.user?.first_name || "Guest",
+            username: tg.initDataUnsafe?.user?.username || "",
+            services: selServices.map(s => s.name),
+            totalPrice: document.getElementById('total').innerText,
+            comment: document.getElementById('comment').value
+        })
+    });
+    if(res.ok) { tg.showAlert("Запись прошла успешно! ✨"); tg.close(); }
 }
 
-async function handleBulkUpload() {
-  const text = document.getElementById("bulkInput").value;
-  const lines = text.split('\n').filter(l => l.trim());
-  const payload = [];
-  lines.forEach(line => {
-    const match = line.match(/(\d{2}\.\d{2})\s+(.+)/);
-    if(match) {
-      const times = match[2].split('/');
-      const [day, month] = match[1].split('.');
-      payload.push(...times.map(t => ({date: `2026-${month}-${day}`, time: t.trim()})));
+// --- ЛОГИКА АДМИНА (УПРАВЛЕНИЕ) ---
+async function loadAdminData() {
+    try {
+        const [resApp, resSlots] = await Promise.all([
+            fetch(`${API}/appointments/${ADMIN_ID}`),
+            fetch(`${API}/slots`)
+        ]);
+        state.allApps = await resApp.json();
+        state.allSlots = await resSlots.json();
+        renderAdminCalendar();
+    } catch (e) {
+        console.error("Ошибка загрузки данных админа", e);
     }
-  });
-  const res = await fetch(`${API}/slots/bulk`, {
-    method: "POST", headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ slots: payload })
-  });
-  if(res.ok) { alert("Опубликовано!"); document.getElementById("bulkInput").value = ""; }
 }
 
+function renderAdminCalendar() {
+    const grid = document.getElementById('admGrid');
+    if(!grid) return;
+    grid.innerHTML = "";
+    const now = new Date();
+    document.getElementById('admMonth').innerText = now.toLocaleString('ru', {month:'long'});
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+    
+    for(let i=1; i<=daysInMonth; i++) {
+        const dStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+        const hasApp = state.allApps.some(a => a.date === dStr);
+        const hasSlot = state.allSlots.some(s => s.date === dStr && s.booked === 0);
+        
+        const el = document.createElement('div');
+        el.className = 'admin-day';
+        el.style.cssText = `padding: 12px 0; border-radius: 15px; background: white; text-align: center; font-weight: 800; font-size: 14px; cursor: pointer; position: relative; border: 1px solid rgba(0,0,0,0.05);`;
+        
+        if (hasApp) el.style.boxShadow = 'inset 0 -3px 0 var(--primary)';
+        if (hasSlot && !hasApp) el.style.background = 'rgba(242, 149, 160, 0.1)';
+
+        el.innerHTML = i;
+        if (hasApp) {
+            const dot = document.createElement('div');
+            dot.style.cssText = "width:4px; height:4px; background:var(--primary); border-radius:50%; position:absolute; bottom:4px; left:50%; transform:translateX(-50%);";
+            el.appendChild(dot);
+        }
+        el.onclick = () => showDayDetails(dStr);
+        grid.appendChild(el);
+    }
+}
+
+function showDayDetails(dateStr) {
+    const container = document.getElementById('dayContent');
+    const placeholder = document.getElementById('adminPlaceholder');
+    const detailsBlock = document.getElementById('dayDetails');
+
+    if(placeholder) placeholder.style.display = 'none';
+    if(detailsBlock) detailsBlock.style.display = 'block';
+    
+    document.getElementById('selectedDateTitle').innerText = `Управление: ${dateStr}`;
+    container.innerHTML = "";
+
+    // 1. Записи клиентов
+    const dayApps = state.allApps.filter(a => a.date === dateStr);
+    if (dayApps.length > 0) {
+        const t = document.createElement('div');
+        t.className = "section-title"; t.innerText = "Записи клиентов";
+        container.appendChild(t);
+        
+        dayApps.forEach(a => {
+            const div = document.createElement('div');
+            div.className = 'glass-card';
+            div.style.padding = '15px'; div.style.marginBottom = '10px';
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between;">
+                    <b>${a.time} — ${a.user_name}</b>
+                    <b style="color:var(--primary)">${a.total_price}₽</b>
+                </div>
+                <div style="font-size:12px; margin-top:5px; opacity:0.7;">${a.services}</div>
+                <div style="font-size:11px; color:var(--primary); font-weight:800; margin-top:5px;" onclick="tg.openTelegramLink('https://t.me/${a.username}')">@${a.username || 'чат'}</div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // 2. Сетка управления окошками
+    const t2 = document.createElement('div');
+    t2.className = "section-title"; t2.style.marginTop = "20px";
+    t2.innerText = "Свободные окошки (нажми для изм.)";
+    container.appendChild(t2);
+
+    const grid = document.createElement('div');
+    grid.className = "slots-grid";
+    
+    const daySlots = state.allSlots.filter(s => s.date === dateStr && s.booked === 0);
+
+    TIME_PRESETS.forEach(time => {
+        const slot = daySlots.find(s => s.time === time);
+        const btn = document.createElement('div');
+        btn.className = `slot ${slot ? 'selected' : ''}`;
+        btn.innerText = time;
+        
+        btn.onclick = async () => {
+            btn.style.opacity = "0.5";
+            if (slot) {
+                // Удаляем если есть
+                const res = await fetch(`${API}/slots/${slot.id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    state.allSlots = state.allSlots.filter(s => s.id !== slot.id);
+                }
+            } else {
+                // Создаем если нет
+                const res = await fetch(`${API}/slots/bulk`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ slots: [{ date: dateStr, time: time }] })
+                });
+                if (res.ok) {
+                    const newSlots = await (await fetch(`${API}/slots`)).json();
+                    state.allSlots = newSlots;
+                }
+            }
+            renderAdminCalendar();
+            showDayDetails(dateStr);
+        };
+        grid.appendChild(btn);
+    });
+    container.appendChild(grid);
+}
+
+// Запуск
+initClientCalendar();
 loadServices();
 </script>
 </body>
