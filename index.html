@@ -11,55 +11,121 @@
             --primary: #1A1AA7;
             --accent: #F295A0;
             --bg: #f8f9fb;
-            --card: #ffffff;
+            --card: rgba(255, 255, 255, 0.8);
+            --text: #1a1a1a;
+            --border: rgba(26, 26, 167, 0.1);
+        }
+
+        /* Адаптация под темную тему Telegram */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #5c5cff;
+                --accent: #ffb1bb;
+                --bg: #0f0f0f;
+                --card: rgba(28, 28, 30, 0.8);
+                --text: #ffffff;
+                --border: rgba(255, 255, 255, 0.1);
+            }
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Manrope', sans-serif; background: linear-gradient(135deg, #fff5f6 0%, #eef0ff 100%); min-height: 100vh; padding: 20px; color: #1a1a1a; }
+        
+        body { 
+            font-family: 'Manrope', sans-serif; 
+            background: var(--bg);
+            background-attachment: fixed;
+            min-height: 100vh; 
+            padding: 20px; 
+            color: var(--text); 
+            transition: background 0.3s ease;
+        }
 
-        .header { text-align: center; margin-bottom: 25px; }
+        /* Элементы размытия фона (Glassmorphism) */
+        .glass-card { 
+            background: var(--card); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 24px; 
+            padding: 20px; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05); 
+            margin-bottom: 15px; 
+            transition: transform 0.2s ease;
+        }
+
+        .header { text-align: center; margin-bottom: 25px; animation: fadeIn 0.8s ease; }
         .logo { font-size: 42px; font-weight: 800; color: var(--primary); letter-spacing: 5px; margin-bottom: 5px; }
         .master { font-size: 14px; font-weight: 700; color: var(--primary); opacity: 0.8; }
 
         /* Табы */
-        .tabs { display: flex; background: rgba(255,255,255,0.5); padding: 5px; border-radius: 18px; margin-bottom: 25px; backdrop-filter: blur(10px); }
-        .tab { flex: 1; padding: 12px; text-align: center; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #888; cursor: pointer; border-radius: 14px; transition: 0.3s; }
-        .tab.active { background: var(--card); color: var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .tabs { 
+            display: flex; 
+            background: var(--card); 
+            padding: 5px; 
+            border-radius: 18px; 
+            margin-bottom: 25px; 
+            backdrop-filter: blur(10px); 
+            border: 1px solid var(--border);
+        }
+        .tab { 
+            flex: 1; padding: 12px; text-align: center; font-weight: 800; font-size: 11px; 
+            text-transform: uppercase; letter-spacing: 1px; color: #888; cursor: pointer; 
+            border-radius: 14px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .tab.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(26, 26, 167, 0.2); }
 
         .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); margin: 25px 0 12px 5px; opacity: 0.9; }
 
-        /* Карточки */
-        .glass-card { background: var(--card); border-radius: 24px; padding: 20px; box-shadow: 0 10px 30px rgba(26, 26, 167, 0.04); margin-bottom: 15px; }
-
-        /* КАЛЕНДАРЬ СЕТКА */
+        /* КАЛЕНДАРЬ */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
-        .cal-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; border-radius: 12px; cursor: pointer; position: relative; transition: 0.2s; background: #fdfdfd; border: 1px solid rgba(0,0,0,0.02); }
+        .cal-day { 
+            aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
+            font-size: 14px; font-weight: 800; border-radius: 12px; cursor: pointer; 
+            position: relative; transition: 0.3s; background: rgba(255,255,255,0.05); 
+            border: 1px solid var(--border); color: var(--text);
+        }
         .cal-day.has-slots::after { content: ''; width: 4px; height: 4px; background: var(--primary); border-radius: 50%; position: absolute; bottom: 5px; }
-        .cal-day.active { background: var(--primary) !important; color: white !important; }
+        .cal-day.active { background: var(--primary) !important; color: white !important; transform: scale(1.1); z-index: 1; }
         .cal-day.disabled { opacity: 0.2; pointer-events: none; }
-        .month-name { text-align: center; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; font-size: 15px; color: var(--primary); }
 
-        /* СЕТКА ВРЕМЕНИ */
-        .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .slot-btn { padding: 12px; background: #fff; border-radius: 14px; text-align: center; font-weight: 800; font-size: 13px; border: 1px solid rgba(0,0,0,0.05); transition: 0.2s; }
-        .slot-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        /* ВРЕМЯ */
+        .slot-btn { 
+            padding: 12px; background: var(--card); border-radius: 14px; text-align: center; 
+            font-weight: 800; font-size: 13px; border: 1px solid var(--border); color: var(--text);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .slot-btn.selected { background: var(--primary); color: white; transform: scale(1.05); }
 
         /* УСЛУГИ */
-        .srv-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
-        .srv-item:last-child { border: none; }
-        .srv-info b { display: block; font-size: 15px; margin-bottom: 2px; }
-        .srv-info span { font-size: 12px; color: #888; font-weight: 700; }
-        .srv-check { width: 22px; height: 22px; border: 2px solid #e0e0e0; border-radius: 7px; transition: 0.3s; position: relative; }
-        .srv-item.active .srv-check { background: var(--primary); border-color: var(--primary); }
+        .srv-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        .srv-item:active { opacity: 0.6; }
+        .srv-check { 
+            width: 24px; height: 24px; border: 2px solid var(--border); border-radius: 8px; 
+            transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); position: relative; 
+        }
+        .srv-item.active .srv-check { background: var(--primary); border-color: var(--primary); transform: rotate(360deg); }
         .srv-item.active .srv-check::after { content: '✓'; color: white; font-size: 14px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-        .btn-main { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 20px; font-weight: 800; font-size: 15px; margin-top: 20px; box-shadow: 0 10px 20px rgba(26, 26, 167, 0.2); }
-        
-        /* Админ-карточки клиентов */
-        .client-card { border-left: 4px solid var(--primary); margin-bottom: 10px; padding-left: 15px; }
+        /* Скелетон анимация */
+        .skeleton {
+            background: linear-gradient(90deg, var(--border) 25%, var(--card) 50%, var(--border) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 12px;
+        }
 
-        #dayDetails { animation: slideUp 0.3s ease-out; }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .btn-main { 
+            width: 100%; padding: 18px; background: var(--primary); color: white; border: none; 
+            border-radius: 20px; font-weight: 800; font-size: 15px; margin-top: 20px; 
+            box-shadow: 0 10px 20px rgba(26, 26, 167, 0.2); transition: 0.3s;
+        }
+        .btn-main:active { transform: scale(0.98); opacity: 0.9; }
+
+        textarea { color: var(--text); caret-color: var(--primary); }
     </style>
 </head>
 <body>
@@ -76,27 +142,27 @@
 
     <div id="panel-client">
         <div class="section-title">1. Выбери дату</div>
-        <div class="glass-card">
+        <div class="glass-card" style="animation: slideUp 0.4s ease forwards;">
             <div class="month-name" id="cliMonth">Январь</div>
             <div class="calendar-grid" id="cliGrid"></div>
         </div>
 
         <div class="section-title">2. Время</div>
-        <div class="slots-grid" id="cliSlots">
+        <div class="slots-grid" id="cliSlots" style="animation: slideUp 0.5s ease forwards;">
             <div style="grid-column: 1/4; text-align: center; padding: 10px; opacity: 0.5; font-size: 13px;">Сначала выбери дату</div>
         </div>
 
         <div class="section-title">3. Услуги</div>
-        <div class="glass-card" id="srvList"></div>
+        <div class="glass-card" id="srvList" style="animation: slideUp 0.6s ease forwards;"></div>
 
         <div class="section-title">4. Комментарий к записи</div>
-          <div class="glass-card">
-              <textarea id="cliComment" placeholder="Напиши пожелания (дизайн, длина, старое снятие...)" 
-                  style="width: 100%; border: none; outline: none; font-family: inherit; font-size: 14px; resize: none; background: transparent;" 
-                  rows="3"></textarea>
-          </div>
+        <div class="glass-card" style="animation: slideUp 0.7s ease forwards;">
+            <textarea id="cliComment" placeholder="Напиши пожелания..." 
+                style="width: 100%; border: none; outline: none; font-family: inherit; font-size: 14px; resize: none; background: transparent;" 
+                rows="3"></textarea>
+        </div>
 
-        <div class="glass-card">
+        <div class="glass-card" style="animation: slideUp 0.8s ease forwards;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-weight: 800; opacity: 0.6;">ИТОГО:</span>
                 <span style="font-size: 24px; font-weight: 800; color: var(--primary);"><span id="total">0</span> ₽</span>
@@ -111,7 +177,6 @@
             <div class="month-name" id="admMonth">Январь</div>
             <div class="calendar-grid" id="admGrid"></div>
         </div>
-
         <div id="dayDetails" style="display:none;">
             <div class="section-title" id="selectedDateTitle">События</div>
             <div id="dayContent"></div>
@@ -121,6 +186,7 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.enableClosingConfirmation(); // Подтверждение закрытия, чтобы не потерять данные
 
         const API = "https://nails-backend-5knq.onrender.com";
         const ADMIN_ID = 381232429;
@@ -132,8 +198,9 @@
 
         const TIME_PRESETS = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
 
-        // Инициализация
         async function init() {
+            // Показываем скелетоны перед загрузкой
+            document.getElementById('cliGrid').innerHTML = Array(28).fill('<div class="cal-day skeleton"></div>').join('');
             await loadData();
             await loadServices();
             renderCalendar('cli');
@@ -161,7 +228,6 @@
             const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
             const shift = firstDay === 0 ? 6 : firstDay - 1;
 
-            // Пустые ячейки для выравнивания
             for(let s=0; s<shift; s++) grid.appendChild(document.createElement('div'));
 
             for(let i=1; i<=daysInMonth; i++) {
@@ -177,15 +243,17 @@
                     if (hasFree) el.classList.add('has-slots');
                     if (new Date(dStr) < new Date().setHours(0,0,0,0)) el.classList.add('disabled');
                     el.onclick = () => {
+                        tg.HapticFeedback.impactOccurred('light');
                         document.querySelectorAll('#cliGrid .cal-day').forEach(d => d.classList.remove('active'));
                         el.classList.add('active');
                         selDate = dStr;
                         renderCliSlots(dStr);
                     };
                 } else {
-                    if (hasApp) el.style.boxShadow = "inset 0 -3px 0 var(--primary)";
+                    if (hasApp) el.style.boxShadow = "inset 0 -4px 0 var(--primary)";
                     if (hasFree && !hasApp) el.style.background = "rgba(242, 149, 160, 0.1)";
                     el.onclick = () => {
+                        tg.HapticFeedback.selectionChanged();
                         document.querySelectorAll('#admGrid .cal-day').forEach(d => d.classList.remove('active'));
                         el.classList.add('active');
                         showAdminDay(dStr);
@@ -206,6 +274,7 @@
                 b.className = 'slot-btn';
                 b.innerText = s.time;
                 b.onclick = () => {
+                    tg.HapticFeedback.impactOccurred('medium');
                     document.querySelectorAll('.slot-btn').forEach(x => x.classList.remove('selected'));
                     b.classList.add('selected');
                     selSlot = s.id;
@@ -221,21 +290,19 @@
             cont.innerHTML = "";
 
             const dayApps = state.allApps.filter(a => a.date === dateStr);
-            if(dayApps.length) {
-                dayApps.forEach(a => {
-                    const d = document.createElement('div');
-                    d.className = 'glass-card client-card';
-// Найди внутри функции showAdminDay строчку, где создается карточка клиента, и замени на эту:
-                    d.innerHTML = `
-                        <div style="display:flex; justify-content:space-between;">
-                            <b>${a.time} — ${a.user_name}</b>
-                            <span style="color:var(--primary)">${a.total_price}₽</span>
-                        </div>
-                        <div style="font-size:12px; opacity:0.7; margin-top:5px;">${a.services}</div>
-                        ${a.comment ? `<div style="font-size:12px; color:var(--accent); margin-top:5px; font-style:italic;">💬 ${a.comment}</div>` : ''}
-                    `;
-                });
-            }
+            dayApps.forEach(a => {
+                const d = document.createElement('div');
+                d.className = 'glass-card client-card';
+                d.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <b>${a.time} — ${a.user_name}</b>
+                        <span style="color:var(--primary); font-weight:800;">${a.total_price}₽</span>
+                    </div>
+                    <div style="font-size:12px; opacity:0.7; margin-top:5px;">${a.services}</div>
+                    ${a.comment ? `<div style="font-size:12px; color:var(--accent); margin-top:5px; font-style:italic;">💬 ${a.comment}</div>` : ''}
+                `;
+                cont.appendChild(d);
+            });
 
             const grid = document.createElement('div');
             grid.className = "slots-grid";
@@ -247,6 +314,7 @@
                 b.className = `slot-btn ${s ? 'selected' : ''}`;
                 b.innerText = time;
                 b.onclick = async () => {
+                    tg.HapticFeedback.impactOccurred('medium');
                     if(s) await fetch(`${API}/slots/${s.id}`, {method:'DELETE'});
                     else await fetch(`${API}/slots/bulk`, {
                         method:'POST',
@@ -271,10 +339,15 @@
                 item.className = 'srv-item';
                 item.innerHTML = `<div class="srv-info"><b>${s.name}</b><span>${s.price} ₽</span></div><div class="srv-check"></div>`;
                 item.onclick = () => {
+                    tg.HapticFeedback.impactOccurred('light');
                     const idx = selServices.findIndex(x => x.id === s.id);
                     if(idx === -1) { selServices.push(s); item.classList.add('active'); }
                     else { selServices.splice(idx,1); item.classList.remove('active'); }
-                    document.getElementById('total').innerText = selServices.reduce((a,b)=>a+b.price,0);
+                    
+                    // Анимация числа итого
+                    const totalEl = document.getElementById('total');
+                    const newTotal = selServices.reduce((a,b)=>a+b.price,0);
+                    totalEl.innerText = newTotal;
                 };
                 cont.appendChild(item);
             });
@@ -284,42 +357,44 @@
             if (!selSlot) return tg.showAlert("Выбери время! ⏰");
             if (selServices.length === 0) return tg.showAlert("Выбери хотя бы одну услугу! 💅");
 
-            const commentText = document.getElementById('cliComment').value;
+            tg.showConfirm("Подтверждаешь запись?", async (ok) => {
+                if(!ok) return;
+                
+                const commentText = document.getElementById('cliComment').value;
+                const data = {
+                    slotId: selSlot,
+                    userId: tg.initDataUnsafe?.user?.id || 0,
+                    userName: tg.initDataUnsafe?.user?.first_name || "Клиент",
+                    username: tg.initDataUnsafe?.user?.username || "",
+                    services: selServices.map(s => s.name),
+                    totalPrice: document.getElementById('total').innerText,
+                    comment: commentText
+                };
 
-            const data = {
-                slotId: selSlot,
-                userId: tg.initDataUnsafe?.user?.id || 0,
-                userName: tg.initDataUnsafe?.user?.first_name || "Клиент",
-                username: tg.initDataUnsafe?.user?.username || "", // Тот самый @username для связи
-                services: selServices.map(s => s.name),
-                totalPrice: document.getElementById('total').innerText,
-                comment: commentText // Отправляем коммент на сервер
-            };
+                try {
+                    const res = await fetch(`${API}/book`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data)
+                    });
 
-            try {
-                const res = await fetch(`${API}/book`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                });
-
-                if (res.ok) {
-                    tg.showAlert("Ура! Запись прошла успешно ✨ Жду тебя!");
-                    tg.close();
-                } else {
-                    const err = await res.json();
-                    tg.showAlert("Ошибка: " + err.error);
-                }
-            } catch (e) {
-                tg.showAlert("Сервер временно недоступен 😩");
-            }
+                    if (res.ok) {
+                        tg.HapticFeedback.notificationOccurred('success');
+                        tg.showAlert("Запись прошла успешно ✨", () => tg.close());
+                    } else {
+                        const err = await res.json();
+                        tg.showAlert("Ошибка: " + err.error);
+                    }
+                } catch (e) { tg.showAlert("Ошибка сети 😩"); }
+            });
         }
 
         function switchTab(mode) {
+            tg.HapticFeedback.impactOccurred('medium');
             document.getElementById('panel-client').style.display = mode === 'client' ? 'block' : 'none';
             document.getElementById('panel-admin').style.display = mode === 'admin' ? 'block' : 'none';
-            document.getElementById('tab-client').classList.toggle('active', mode === 'client');
-            document.getElementById('tab-admin').classList.toggle('active', mode === 'admin');
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + mode).classList.add('active');
             if(mode === 'admin') renderCalendar('adm');
         }
 
