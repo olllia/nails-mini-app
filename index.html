@@ -11,121 +11,60 @@
             --primary: #1A1AA7;
             --accent: #F295A0;
             --bg: #f8f9fb;
-            --card: rgba(255, 255, 255, 0.8);
+            --card: rgba(255, 255, 255, 0.9);
             --text: #1a1a1a;
-            --border: rgba(26, 26, 167, 0.1);
-        }
-
-        /* Адаптация под темную тему Telegram */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --primary: #5c5cff;
-                --accent: #ffb1bb;
-                --bg: #0f0f0f;
-                --card: rgba(28, 28, 30, 0.8);
-                --text: #ffffff;
-                --border: rgba(255, 255, 255, 0.1);
-            }
+            --border: rgba(26, 26, 167, 0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body { 
             font-family: 'Manrope', sans-serif; 
-            background: var(--bg);
-            background-attachment: fixed;
+            background: linear-gradient(135deg, #fff5f6 0%, #eef0ff 100%);
             min-height: 100vh; 
             padding: 20px; 
-            color: var(--text); 
-            transition: background 0.3s ease;
+            color: var(--text);
         }
 
-        /* Элементы размытия фона (Glassmorphism) */
         .glass-card { 
             background: var(--card); 
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--border);
             border-radius: 24px; 
             padding: 20px; 
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05); 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); 
             margin-bottom: 15px; 
-            transition: transform 0.2s ease;
         }
 
-        .header { text-align: center; margin-bottom: 25px; animation: fadeIn 0.8s ease; }
+        .header { text-align: center; margin-bottom: 25px; }
         .logo { font-size: 42px; font-weight: 800; color: var(--primary); letter-spacing: 5px; margin-bottom: 5px; }
         .master { font-size: 14px; font-weight: 700; color: var(--primary); opacity: 0.8; }
 
-        /* Табы */
-        .tabs { 
-            display: flex; 
-            background: var(--card); 
-            padding: 5px; 
-            border-radius: 18px; 
-            margin-bottom: 25px; 
-            backdrop-filter: blur(10px); 
-            border: 1px solid var(--border);
-        }
-        .tab { 
-            flex: 1; padding: 12px; text-align: center; font-weight: 800; font-size: 11px; 
-            text-transform: uppercase; letter-spacing: 1px; color: #888; cursor: pointer; 
-            border-radius: 14px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        .tab.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(26, 26, 167, 0.2); }
+        .tabs { display: flex; background: var(--card); padding: 5px; border-radius: 18px; margin-bottom: 25px; border: 1px solid var(--border); }
+        .tab { flex: 1; padding: 12px; text-align: center; font-weight: 800; font-size: 12px; text-transform: uppercase; color: #888; cursor: pointer; border-radius: 14px; transition: 0.3s; }
+        .tab.active { background: var(--primary); color: white; }
 
-        .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); margin: 25px 0 12px 5px; opacity: 0.9; }
+        .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); margin: 25px 0 12px 5px; }
 
-        /* КАЛЕНДАРЬ */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
-        .cal-day { 
-            aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
-            font-size: 14px; font-weight: 800; border-radius: 12px; cursor: pointer; 
-            position: relative; transition: 0.3s; background: rgba(255,255,255,0.05); 
-            border: 1px solid var(--border); color: var(--text);
-        }
+        .cal-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; border-radius: 12px; cursor: pointer; border: 1px solid var(--border); background: #fff; transition: 0.2s; }
+        .cal-day.active { background: var(--primary) !important; color: white !important; }
         .cal-day.has-slots::after { content: ''; width: 4px; height: 4px; background: var(--primary); border-radius: 50%; position: absolute; bottom: 5px; }
-        .cal-day.active { background: var(--primary) !important; color: white !important; transform: scale(1.1); z-index: 1; }
         .cal-day.disabled { opacity: 0.2; pointer-events: none; }
 
-        /* ВРЕМЯ */
-        .slot-btn { 
-            padding: 12px; background: var(--card); border-radius: 14px; text-align: center; 
-            font-weight: 800; font-size: 13px; border: 1px solid var(--border); color: var(--text);
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-        .slot-btn.selected { background: var(--primary); color: white; transform: scale(1.05); }
+        .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .slot-btn { padding: 12px; background: #fff; border-radius: 14px; text-align: center; font-weight: 800; font-size: 13px; border: 1px solid var(--border); transition: 0.2s; color: var(--text); }
+        .slot-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* УСЛУГИ */
-        .srv-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
-        .srv-item:active { opacity: 0.6; }
-        .srv-check { 
-            width: 24px; height: 24px; border: 2px solid var(--border); border-radius: 8px; 
-            transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); position: relative; 
-        }
-        .srv-item.active .srv-check { background: var(--primary); border-color: var(--primary); transform: rotate(360deg); }
+        .srv-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .srv-check { width: 22px; height: 22px; border: 2px solid #e0e0e0; border-radius: 7px; position: relative; }
+        .srv-item.active .srv-check { background: var(--primary); border-color: var(--primary); }
         .srv-item.active .srv-check::after { content: '✓'; color: white; font-size: 14px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-        /* Скелетон анимация */
-        .skeleton {
-            background: linear-gradient(90deg, var(--border) 25%, var(--card) 50%, var(--border) 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: 12px;
-        }
-
-        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .btn-main { 
-            width: 100%; padding: 18px; background: var(--primary); color: white; border: none; 
-            border-radius: 20px; font-weight: 800; font-size: 15px; margin-top: 20px; 
-            box-shadow: 0 10px 20px rgba(26, 26, 167, 0.2); transition: 0.3s;
-        }
-        .btn-main:active { transform: scale(0.98); opacity: 0.9; }
-
-        textarea { color: var(--text); caret-color: var(--primary); }
+        .btn-main { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 20px; font-weight: 800; font-size: 15px; margin-top: 20px; cursor: pointer; }
+        
+        .skeleton { background: #eee; border-radius: 12px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -142,28 +81,26 @@
 
     <div id="panel-client">
         <div class="section-title">1. Выбери дату</div>
-        <div class="glass-card" style="animation: slideUp 0.4s ease forwards;">
-            <div class="month-name" id="cliMonth">Январь</div>
+        <div class="glass-card">
+            <div id="cliMonth" style="text-align: center; font-weight: 800; margin-bottom: 15px; color: var(--primary);"></div>
             <div class="calendar-grid" id="cliGrid"></div>
         </div>
 
         <div class="section-title">2. Время</div>
-        <div class="slots-grid" id="cliSlots" style="animation: slideUp 0.5s ease forwards;">
+        <div class="slots-grid" id="cliSlots">
             <div style="grid-column: 1/4; text-align: center; padding: 10px; opacity: 0.5; font-size: 13px;">Сначала выбери дату</div>
         </div>
 
         <div class="section-title">3. Услуги</div>
-        <div class="glass-card" id="srvList" style="animation: slideUp 0.6s ease forwards;"></div>
+        <div class="glass-card" id="srvList"></div>
 
-        <div class="section-title">4. Комментарий к записи</div>
-        <div class="glass-card" style="animation: slideUp 0.7s ease forwards;">
-            <textarea id="cliComment" placeholder="Напиши пожелания..." 
-                style="width: 100%; border: none; outline: none; font-family: inherit; font-size: 14px; resize: none; background: transparent;" 
-                rows="3"></textarea>
+        <div class="section-title">4. Комментарий</div>
+        <div class="glass-card">
+            <textarea id="cliComment" placeholder="Пожелания по дизайну..." style="width: 100%; border: none; outline: none; background: transparent; font-family: inherit; resize: none;" rows="3"></textarea>
         </div>
 
-        <div class="glass-card" style="animation: slideUp 0.8s ease forwards;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <span style="font-weight: 800; opacity: 0.6;">ИТОГО:</span>
                 <span style="font-size: 24px; font-weight: 800; color: var(--primary);"><span id="total">0</span> ₽</span>
             </div>
@@ -174,7 +111,7 @@
     <div id="panel-admin" style="display:none;">
         <div class="section-title">Твой календарь</div>
         <div class="glass-card">
-            <div class="month-name" id="admMonth">Январь</div>
+            <div id="admMonth" style="text-align: center; font-weight: 800; margin-bottom: 15px; color: var(--primary);"></div>
             <div class="calendar-grid" id="admGrid"></div>
         </div>
         <div id="dayDetails" style="display:none;">
@@ -186,7 +123,6 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.enableClosingConfirmation(); // Подтверждение закрытия, чтобы не потерять данные
 
         const API = "https://nails-backend-5knq.onrender.com";
         const ADMIN_ID = 381232429;
@@ -199,8 +135,6 @@
         const TIME_PRESETS = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
 
         async function init() {
-            // Показываем скелетоны перед загрузкой
-            document.getElementById('cliGrid').innerHTML = Array(28).fill('<div class="cal-day skeleton"></div>').join('');
             await loadData();
             await loadServices();
             renderCalendar('cli');
@@ -223,8 +157,10 @@
             grid.innerHTML = "";
             
             const now = new Date();
-            mName.innerText = now.toLocaleString('ru', {month:'long'});
-            const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+            const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+            mName.innerText = monthNames[now.getMonth()];
+
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
             const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
             const shift = firstDay === 0 ? 6 : firstDay - 1;
 
@@ -236,29 +172,14 @@
                 el.className = 'cal-day';
                 el.innerText = i;
 
-                const hasFree = state.allSlots.some(s => s.date === dStr && s.booked === 0);
-                const hasApp = state.allApps.some(a => a.date === dStr);
+                if (state.allSlots.some(s => s.date === dStr && s.booked === 0)) el.classList.add('has-slots');
 
-                if (type === 'cli') {
-                    if (hasFree) el.classList.add('has-slots');
-                    if (new Date(dStr) < new Date().setHours(0,0,0,0)) el.classList.add('disabled');
-                    el.onclick = () => {
-                        tg.HapticFeedback.impactOccurred('light');
-                        document.querySelectorAll('#cliGrid .cal-day').forEach(d => d.classList.remove('active'));
-                        el.classList.add('active');
-                        selDate = dStr;
-                        renderCliSlots(dStr);
-                    };
-                } else {
-                    if (hasApp) el.style.boxShadow = "inset 0 -4px 0 var(--primary)";
-                    if (hasFree && !hasApp) el.style.background = "rgba(242, 149, 160, 0.1)";
-                    el.onclick = () => {
-                        tg.HapticFeedback.selectionChanged();
-                        document.querySelectorAll('#admGrid .cal-day').forEach(d => d.classList.remove('active'));
-                        el.classList.add('active');
-                        showAdminDay(dStr);
-                    };
-                }
+                el.onclick = () => {
+                    document.querySelectorAll('.cal-day').forEach(d => d.classList.remove('active'));
+                    el.classList.add('active');
+                    if(type === 'cli') renderCliSlots(dStr);
+                    else showAdminDay(dStr);
+                };
                 grid.appendChild(el);
             }
         }
@@ -267,14 +188,13 @@
             const cont = document.getElementById('cliSlots');
             cont.innerHTML = "";
             const filtered = state.allSlots.filter(s => s.date === date && s.booked === 0);
-            if(!filtered.length) { cont.innerHTML = "<div style='grid-column:1/4;text-align:center;opacity:0.5'>Мест нет</div>"; return; }
+            if(!filtered.length) { cont.innerHTML = "<div style='grid-column:1/4;text-align:center;opacity:0.5'>Нет свободных мест</div>"; return; }
             
             filtered.forEach(s => {
                 const b = document.createElement('div');
                 b.className = 'slot-btn';
                 b.innerText = s.time;
                 b.onclick = () => {
-                    tg.HapticFeedback.impactOccurred('medium');
                     document.querySelectorAll('.slot-btn').forEach(x => x.classList.remove('selected'));
                     b.classList.add('selected');
                     selSlot = s.id;
@@ -292,30 +212,22 @@
             const dayApps = state.allApps.filter(a => a.date === dateStr);
             dayApps.forEach(a => {
                 const d = document.createElement('div');
-                d.className = 'glass-card client-card';
-                d.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <b>${a.time} — ${a.user_name}</b>
-                        <span style="color:var(--primary); font-weight:800;">${a.total_price}₽</span>
-                    </div>
-                    <div style="font-size:12px; opacity:0.7; margin-top:5px;">${a.services}</div>
-                    ${a.comment ? `<div style="font-size:12px; color:var(--accent); margin-top:5px; font-style:italic;">💬 ${a.comment}</div>` : ''}
-                `;
+                d.className = 'glass-card';
+                d.style.borderLeft = "4px solid var(--primary)";
+                d.innerHTML = `<b>${a.time} — ${a.user_name}</b><br><small>${a.services}</small>`;
                 cont.appendChild(d);
             });
 
             const grid = document.createElement('div');
             grid.className = "slots-grid";
-            const daySlots = state.allSlots.filter(s => s.date === dateStr && s.booked === 0);
-
+            
             TIME_PRESETS.forEach(time => {
-                const s = daySlots.find(x => x.time === time);
+                const exists = state.allSlots.find(x => x.date === dateStr && x.time === time);
                 const b = document.createElement('div');
-                b.className = `slot-btn ${s ? 'selected' : ''}`;
+                b.className = `slot-btn ${exists ? 'selected' : ''}`;
                 b.innerText = time;
                 b.onclick = async () => {
-                    tg.HapticFeedback.impactOccurred('medium');
-                    if(s) await fetch(`${API}/slots/${s.id}`, {method:'DELETE'});
+                    if(exists) await fetch(`${API}/slots/${exists.id}`, {method:'DELETE'});
                     else await fetch(`${API}/slots/bulk`, {
                         method:'POST',
                         headers:{'Content-Type':'application/json'},
@@ -323,7 +235,6 @@
                     });
                     await loadData();
                     showAdminDay(dateStr);
-                    renderCalendar('adm');
                 };
                 grid.appendChild(b);
             });
@@ -334,72 +245,53 @@
             const res = await fetch(`${API}/services`);
             const data = await res.json();
             const cont = document.getElementById('srvList');
+            cont.innerHTML = "";
             data.forEach(s => {
                 const item = document.createElement('div');
                 item.className = 'srv-item';
-                item.innerHTML = `<div class="srv-info"><b>${s.name}</b><span>${s.price} ₽</span></div><div class="srv-check"></div>`;
+                item.innerHTML = `<div><b>${s.name}</b><br><small>${s.price} ₽</small></div><div class="srv-check"></div>`;
                 item.onclick = () => {
-                    tg.HapticFeedback.impactOccurred('light');
                     const idx = selServices.findIndex(x => x.id === s.id);
                     if(idx === -1) { selServices.push(s); item.classList.add('active'); }
                     else { selServices.splice(idx,1); item.classList.remove('active'); }
-                    
-                    // Анимация числа итого
-                    const totalEl = document.getElementById('total');
-                    const newTotal = selServices.reduce((a,b)=>a+b.price,0);
-                    totalEl.innerText = newTotal;
+                    document.getElementById('total').innerText = selServices.reduce((a,b)=>a+b.price,0);
                 };
                 cont.appendChild(item);
             });
         }
 
         async function submitBooking() {
-            if (!selSlot) return tg.showAlert("Выбери время! ⏰");
-            if (selServices.length === 0) return tg.showAlert("Выбери хотя бы одну услугу! 💅");
-
-            tg.showConfirm("Подтверждаешь запись?", async (ok) => {
-                if(!ok) return;
-                
-                const commentText = document.getElementById('cliComment').value;
-                const data = {
-                    slotId: selSlot,
-                    userId: tg.initDataUnsafe?.user?.id || 0,
-                    userName: tg.initDataUnsafe?.user?.first_name || "Клиент",
-                    username: tg.initDataUnsafe?.user?.username || "",
-                    services: selServices.map(s => s.name),
-                    totalPrice: document.getElementById('total').innerText,
-                    comment: commentText
-                };
-
-                try {
-                    const res = await fetch(`${API}/book`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(data)
-                    });
-
-                    if (res.ok) {
-                        tg.HapticFeedback.notificationOccurred('success');
-                        tg.showAlert("Запись прошла успешно ✨", () => tg.close());
-                    } else {
-                        const err = await res.json();
-                        tg.showAlert("Ошибка: " + err.error);
-                    }
-                } catch (e) { tg.showAlert("Ошибка сети 😩"); }
+            if (!selSlot) return tg.showAlert("Выбери время!");
+            const data = {
+                slotId: selSlot,
+                userId: tg.initDataUnsafe?.user?.id || 0,
+                userName: tg.initDataUnsafe?.user?.first_name || "Клиент",
+                services: selServices.map(s => s.name),
+                totalPrice: document.getElementById('total').innerText,
+                comment: document.getElementById('cliComment').value
+            };
+            const res = await fetch(`${API}/book`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
             });
+            if (res.ok) { tg.showAlert("Запись успешно создана! ✨"); tg.close(); }
         }
 
-        function switchTab(mode) {
-            tg.HapticFeedback.impactOccurred('medium');
-            document.getElementById('panel-client').style.display = mode === 'client' ? 'block' : 'none';
-            document.getElementById('panel-admin').style.display = mode === 'admin' ? 'block' : 'none';
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById('tab-' + mode).classList.add('active');
-            if(mode === 'admin') renderCalendar('adm');
-        }
+        document.getElementById('tab-client').onclick = () => {
+            document.getElementById('panel-client').style.display = 'block';
+            document.getElementById('panel-admin').style.display = 'none';
+            document.getElementById('tab-client').classList.add('active');
+            document.getElementById('tab-admin').classList.remove('active');
+        };
 
-        document.getElementById('tab-client').onclick = () => switchTab('client');
-        document.getElementById('tab-admin').onclick = () => switchTab('admin');
+        document.getElementById('tab-admin').onclick = () => {
+            document.getElementById('panel-client').style.display = 'none';
+            document.getElementById('panel-admin').style.display = 'block';
+            document.getElementById('tab-admin').classList.add('active');
+            document.getElementById('tab-client').classList.remove('active');
+            renderCalendar('adm');
+        };
 
         init();
     </script>
