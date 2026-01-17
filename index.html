@@ -3,72 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>NNAILLSS</title>
+    <title>NNAILLSS | Premium</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1A1AA7;
-            --accent: #F295A0;
-            --bg: #f8f9fb;
-            --card: rgba(255, 255, 255, 0.9);
-            --text: #1a1a1a;
-            --border: rgba(26, 26, 167, 0.08);
+            --primary: #ffffff; 
+            --accent: #FFD1DC;  
+            --bg-dark: #60001a; 
+            --glass: rgba(255, 255, 255, 0.1); 
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --text-main: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.2);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body { 
             font-family: 'Manrope', sans-serif; 
-            background: linear-gradient(135deg, #fff5f6 0%, #eef0ff 100%);
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 20, 147, 0.5), transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(139, 0, 139, 0.4), transparent 50%),
+                linear-gradient(160deg, #ff4d6d 0%, #30000a 100%);
+            background-attachment: fixed;
             min-height: 100vh; 
             padding: 20px; 
-            color: var(--text);
+            color: var(--text-main);
+            position: relative;
+            overflow-x: hidden;
         }
 
+        /* УСИЛЕННАЯ ЗЕРНИСТОСТЬ */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* УСИЛЕННОЕ СТЕКЛО */
         .glass-card { 
-            background: var(--card); 
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 24px; 
-            padding: 20px; 
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); 
-            margin-bottom: 15px; 
+            background: rgba(255, 255, 255, 0.08); 
+            backdrop-filter: blur(40px) saturate(150%);
+            -webkit-backdrop-filter: blur(40px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px; 
+            padding: 24px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        .header { text-align: center; margin-bottom: 25px; }
-        .logo { font-size: 42px; font-weight: 800; color: var(--primary); letter-spacing: 5px; margin-bottom: 5px; }
-        .master { font-size: 14px; font-weight: 700; color: var(--primary); opacity: 0.8; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { 
+            font-size: 46px; font-weight: 800; color: #ffffff; 
+            letter-spacing: 6px; margin-bottom: 4px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .master { font-size: 13px; font-weight: 700; color: #ffffff; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
 
-        .tabs { display: flex; background: var(--card); padding: 5px; border-radius: 18px; margin-bottom: 25px; border: 1px solid var(--border); }
-        .tab { flex: 1; padding: 12px; text-align: center; font-weight: 800; font-size: 12px; text-transform: uppercase; color: #888; cursor: pointer; border-radius: 14px; transition: 0.3s; }
-        .tab.active { background: var(--primary); color: white; }
+        .tabs { 
+            display: flex; background: rgba(255, 255, 255, 0.1); padding: 6px; 
+            border-radius: 22px; margin-bottom: 30px; border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px);
+        }
+        .tab { 
+            flex: 1; padding: 14px; text-align: center; font-weight: 800; font-size: 11px; 
+            text-transform: uppercase; letter-spacing: 1.2px; color: rgba(255,255,255,0.6); cursor: pointer; 
+            border-radius: 18px; transition: 0.3s; 
+        }
+        .tab.active { background: #ffffff; color: #60001a; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
 
-        .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); margin: 25px 0 12px 5px; }
+        .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #ffffff; margin: 30px 0 15px 8px; opacity: 0.9; }
 
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
-        .cal-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; border-radius: 12px; cursor: pointer; border: 1px solid var(--border); background: #fff; transition: 0.2s; }
-        .cal-day.active { background: var(--primary) !important; color: white !important; }
-        .cal-day.has-slots::after { content: ''; width: 4px; height: 4px; background: var(--primary); border-radius: 50%; position: absolute; bottom: 5px; }
-        .cal-day.disabled { opacity: 0.2; pointer-events: none; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+        .cal-day { 
+            aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            font-size: 15px; font-weight: 800; border-radius: 16px; cursor: pointer; 
+            position: relative; transition: 0.2s; 
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+            color: #ffffff;
+        }
+        .cal-day.active { background: #ffffff !important; color: #60001a !important; transform: scale(1.05); }
+        .cal-day.has-slots::after { content: ''; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; position: absolute; bottom: 8px; }
+        .cal-day.active.has-slots::after { background: #60001a; }
+        .cal-day.disabled { opacity: 0.1; pointer-events: none; }
 
-        .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .slot-btn { padding: 12px; background: #fff; border-radius: 14px; text-align: center; font-weight: 800; font-size: 13px; border: 1px solid var(--border); transition: 0.2s; color: var(--text); }
-        .slot-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .slot-btn { 
+            padding: 16px; background: rgba(255,255,255,0.08); border-radius: 18px; 
+            text-align: center; font-weight: 800; font-size: 14px; 
+            border: 1px solid var(--glass-border); transition: 0.3s; color: #ffffff;
+        }
+        .slot-btn.selected { background: #ffffff; color: #60001a; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
 
-        .srv-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
-        .srv-check { width: 22px; height: 22px; border: 2px solid #e0e0e0; border-radius: 7px; position: relative; }
-        .srv-item.active .srv-check { background: var(--primary); border-color: var(--primary); }
-        .srv-item.active .srv-check::after { content: '✓'; color: white; font-size: 14px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .srv-item { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+        .srv-item:last-child { border: none; }
+        .srv-info b { font-size: 16px; font-weight: 800; display: block; margin-bottom: 4px; color: #fff; }
+        .srv-check { width: 26px; height: 26px; border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; position: relative; }
+        .srv-item.active .srv-check { background: #ffffff; border-color: #ffffff; }
+        .srv-item.active .srv-check::after { content: '✓'; color: #60001a; font-size: 16px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-        .btn-main { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 20px; font-weight: 800; font-size: 15px; margin-top: 20px; cursor: pointer; }
-        
-        .skeleton { background: #eee; border-radius: 12px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .btn-main { 
+            width: 100%; padding: 22px; background: #ffffff; color: #60001a; 
+            border: none; border-radius: 24px; font-weight: 800; font-size: 16px; 
+            margin-top: 25px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); cursor: pointer;
+        }
+
+        textarea { width: 100%; border: none; outline: none; background: rgba(255,255,255,0.08); padding: 15px; border-radius: 15px; color: #fff; font-family: inherit; resize: none; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-
     <div class="header">
         <div class="logo">NNAILLSS</div>
         <div class="master">master: @nnstmlll</div>
@@ -82,40 +133,34 @@
     <div id="panel-client">
         <div class="section-title">1. Выбери дату</div>
         <div class="glass-card">
-            <div id="cliMonth" style="text-align: center; font-weight: 800; margin-bottom: 15px; color: var(--primary);"></div>
+            <div id="cliMonth" style="text-align: center; font-weight: 800; margin-bottom: 20px; font-size: 18px; text-transform: uppercase; letter-spacing: 2px;"></div>
             <div class="calendar-grid" id="cliGrid"></div>
         </div>
-
-        <div class="section-title">2. Время</div>
-        <div class="slots-grid" id="cliSlots">
-            <div style="grid-column: 1/4; text-align: center; padding: 10px; opacity: 0.5; font-size: 13px;">Сначала выбери дату</div>
+        <div class="section-title">2. Свободное время</div>
+        <div id="cliSlots" class="slots-grid">
+            <div style="grid-column: 1/4; text-align: center; padding: 20px; opacity: 0.5;">Сначала выбери дату</div>
         </div>
-
         <div class="section-title">3. Услуги</div>
         <div class="glass-card" id="srvList"></div>
-
         <div class="section-title">4. Комментарий</div>
-        <div class="glass-card">
-            <textarea id="cliComment" placeholder="Пожелания по дизайну..." style="width: 100%; border: none; outline: none; background: transparent; font-family: inherit; resize: none;" rows="3"></textarea>
-        </div>
-
-        <div class="glass-card">
+        <div class="glass-card"><textarea id="cliComment" placeholder="Твои пожелания..." rows="3"></textarea></div>
+        <div class="glass-card" style="text-align: center;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <span style="font-weight: 800; opacity: 0.6;">ИТОГО:</span>
-                <span style="font-size: 24px; font-weight: 800; color: var(--primary);"><span id="total">0</span> ₽</span>
+                <span style="opacity: 0.6; font-size: 12px; font-weight: 800;">ИТОГО</span>
+                <span style="font-size: 26px; font-weight: 800;"><span id="total">0</span> ₽</span>
             </div>
             <button class="btn-main" onclick="submitBooking()">ЗАПИСАТЬСЯ ✨</button>
         </div>
     </div>
 
     <div id="panel-admin" style="display:none;">
-        <div class="section-title">Твой календарь</div>
+        <div class="section-title">График</div>
         <div class="glass-card">
-            <div id="admMonth" style="text-align: center; font-weight: 800; margin-bottom: 15px; color: var(--primary);"></div>
+            <div id="admMonth" style="text-align: center; font-weight: 800; margin-bottom: 20px; text-transform: uppercase;"></div>
             <div class="calendar-grid" id="admGrid"></div>
         </div>
         <div id="dayDetails" style="display:none;">
-            <div class="section-title" id="selectedDateTitle">События</div>
+            <div class="section-title" id="selectedDateTitle">События дня</div>
             <div id="dayContent"></div>
         </div>
     </div>
@@ -123,16 +168,17 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-
         const API = "https://nails-backend-5knq.onrender.com";
         const ADMIN_ID = 381232429;
-
         let state = { allSlots: [], allApps: [] };
-        let selDate = null;
         let selSlot = null;
         let selServices = [];
-
         const TIME_PRESETS = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
+
+        // Эффект конфетти
+        function fireConfetti() {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ffffff', '#FFD1DC', '#ff4d6d'] });
+        }
 
         async function init() {
             await loadData();
@@ -146,8 +192,7 @@
                     fetch(`${API}/slots`).then(r => r.json()),
                     fetch(`${API}/appointments/${ADMIN_ID}`).then(r => r.json())
                 ]);
-                state.allSlots = s;
-                state.allApps = a;
+                state.allSlots = s; state.allApps = a;
             } catch (e) { console.error(e); }
         }
 
@@ -155,30 +200,23 @@
             const grid = document.getElementById(type + 'Grid');
             const mName = document.getElementById(type + 'Month');
             grid.innerHTML = "";
-            
             const now = new Date();
             const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
             mName.innerText = monthNames[now.getMonth()];
-
             const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
             const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
             const shift = firstDay === 0 ? 6 : firstDay - 1;
-
             for(let s=0; s<shift; s++) grid.appendChild(document.createElement('div'));
-
             for(let i=1; i<=daysInMonth; i++) {
                 const dStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
                 const el = document.createElement('div');
                 el.className = 'cal-day';
                 el.innerText = i;
-
                 if (state.allSlots.some(s => s.date === dStr && s.booked === 0)) el.classList.add('has-slots');
-
                 el.onclick = () => {
                     document.querySelectorAll('.cal-day').forEach(d => d.classList.remove('active'));
                     el.classList.add('active');
-                    if(type === 'cli') renderCliSlots(dStr);
-                    else showAdminDay(dStr);
+                    if(type === 'cli') renderCliSlots(dStr); else showAdminDay(dStr);
                 };
                 grid.appendChild(el);
             }
@@ -188,16 +226,13 @@
             const cont = document.getElementById('cliSlots');
             cont.innerHTML = "";
             const filtered = state.allSlots.filter(s => s.date === date && s.booked === 0);
-            if(!filtered.length) { cont.innerHTML = "<div style='grid-column:1/4;text-align:center;opacity:0.5'>Нет свободных мест</div>"; return; }
-            
+            if(!filtered.length) { cont.innerHTML = "<div style='grid-column:1/4;text-align:center;opacity:0.5'>Нет мест</div>"; return; }
             filtered.forEach(s => {
                 const b = document.createElement('div');
-                b.className = 'slot-btn';
-                b.innerText = s.time;
+                b.className = 'slot-btn'; b.innerText = s.time;
                 b.onclick = () => {
                     document.querySelectorAll('.slot-btn').forEach(x => x.classList.remove('selected'));
-                    b.classList.add('selected');
-                    selSlot = s.id;
+                    b.classList.add('selected'); selSlot = s.id;
                 };
                 cont.appendChild(b);
             });
@@ -206,21 +241,17 @@
         async function showAdminDay(dateStr) {
             const cont = document.getElementById('dayContent');
             document.getElementById('dayDetails').style.display = 'block';
-            document.getElementById('selectedDateTitle').innerText = `День: ${dateStr}`;
+            document.getElementById('selectedDateTitle').innerText = `Дата: ${dateStr}`;
             cont.innerHTML = "";
-
             const dayApps = state.allApps.filter(a => a.date === dateStr);
             dayApps.forEach(a => {
                 const d = document.createElement('div');
-                d.className = 'glass-card';
-                d.style.borderLeft = "4px solid var(--primary)";
-                d.innerHTML = `<b>${a.time} — ${a.user_name}</b><br><small>${a.services}</small>`;
+                d.className = 'glass-card'; d.style.fontSize = "14px";
+                d.innerHTML = `<b>${a.time}</b> — ${a.user_name}<br><small>${a.services}</small>`;
                 cont.appendChild(d);
             });
-
             const grid = document.createElement('div');
             grid.className = "slots-grid";
-            
             TIME_PRESETS.forEach(time => {
                 const exists = state.allSlots.find(x => x.date === dateStr && x.time === time);
                 const b = document.createElement('div');
@@ -228,13 +259,8 @@
                 b.innerText = time;
                 b.onclick = async () => {
                     if(exists) await fetch(`${API}/slots/${exists.id}`, {method:'DELETE'});
-                    else await fetch(`${API}/slots/bulk`, {
-                        method:'POST',
-                        headers:{'Content-Type':'application/json'},
-                        body:JSON.stringify({slots:[{date:dateStr, time:time}]})
-                    });
-                    await loadData();
-                    showAdminDay(dateStr);
+                    else await fetch(`${API}/slots/bulk`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slots:[{date:dateStr, time:time}]}) });
+                    await loadData(); showAdminDay(dateStr); renderCalendar('adm');
                 };
                 grid.appendChild(b);
             });
@@ -249,7 +275,7 @@
             data.forEach(s => {
                 const item = document.createElement('div');
                 item.className = 'srv-item';
-                item.innerHTML = `<div><b>${s.name}</b><br><small>${s.price} ₽</small></div><div class="srv-check"></div>`;
+                item.innerHTML = `<div class="srv-info"><b>${s.name}</b><span>${s.price} ₽</span></div><div class="srv-check"></div>`;
                 item.onclick = () => {
                     const idx = selServices.findIndex(x => x.id === s.id);
                     if(idx === -1) { selServices.push(s); item.classList.add('active'); }
@@ -270,12 +296,10 @@
                 totalPrice: document.getElementById('total').innerText,
                 comment: document.getElementById('cliComment').value
             };
-            const res = await fetch(`${API}/book`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-            if (res.ok) { tg.showAlert("Запись успешно создана! ✨"); tg.close(); }
+            try {
+                const res = await fetch(`${API}/book`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+                if (res.ok) { fireConfetti(); setTimeout(() => { tg.showAlert("Запись создана! ✨"); tg.close(); }, 1000); }
+            } catch(e) { tg.showAlert("Ошибка связи с сервером"); }
         }
 
         document.getElementById('tab-client').onclick = () => {
