@@ -172,6 +172,16 @@
             <textarea id="cliComment" placeholder="Напишите здесь..." rows="2" onkeydown="if(event.key==='Enter') this.blur()"></textarea>
         </div>
 
+        <div class="section-title">Прикрепить референс</div>
+          <div class="glass-card" style="padding: 15px; display: flex; align-items: center; gap: 15px;">
+              <label for="photo-input" style="flex-shrink: 0; width: 60px; height: 60px; background: rgba(255,255,255,0.05); border: 2px dashed var(--glass-border); border-radius: 15px; display: flex; items-center; justify-content: center; cursor: pointer; overflow: hidden;">
+                  <span id="photo-preview-plus" style="font-size: 24px; opacity: 0.3;">+</span>
+                  <img id="photo-preview-img" style="display:none; width: 100%; height: 100%; object-fit: cover;">
+              </label>
+              <input type="file" id="photo-input" accept="image/*" style="display: none;" onchange="handlePhoto(this)">
+              <div style="font-size: 11px; opacity: 0.5;">Нажмите на квадрат, чтобы загрузить фото дизайна</div>
+          </div>
+
         <div class="glass-card" style="margin-bottom: 40px; background: rgba(255,255,255,0.08);">
             <div class="total-row">
                 <span class="total-label">К ОПЛАТЕ</span>
@@ -324,10 +334,35 @@
             });
         }
 
+        let selectedPhotoBase64 = null;
+
+        function handlePhoto(input) {
+            const file = input.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    tg.showAlert("Файл слишком большой! Выберите фото до 5МБ");
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    selectedPhotoBase64 = e.target.result;
+                    document.getElementById('photo-preview-img').src = selectedPhotoBase64;
+                    document.getElementById('photo-preview-img').style.display = 'block';
+                    document.getElementById('photo-preview-plus').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // ОБНОВЛЕННАЯ функция submitBooking
         async function submitBooking() {
             if (!selSlot) return tg.showAlert("Выберите время записи");
             if (selServices.length === 0) return tg.showAlert("Выберите услугу");
             
+            const btn = document.querySelector('.btn-main');
+            btn.disabled = true;
+            btn.innerText = "ОТПРАВКА...";
+
             const data = {
                 slotId: selSlot,
                 userId: tg.initDataUnsafe?.user?.id || 0,
@@ -335,13 +370,28 @@
                 username: tg.initDataUnsafe?.user?.username || "",
                 services: selServices.map(s => s.name),
                 totalPrice: document.getElementById('total').innerText,
-                comment: document.getElementById('cliComment').value
+                comment: document.getElementById('cliComment').value,
+                photo: selectedPhotoBase64 // Отправляем фото
             };
+
             try {
-                const res = await fetch(`${API}/book`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-                if (res.ok) { fireConfetti(); setTimeout(() => { tg.close(); }, 2000); }
-                else { tg.showAlert("Ошибка!"); loadData(); renderCalendar('cli'); }
-            } catch(e) { tg.showAlert("Сервер недоступен"); }
+                const res = await fetch(`${API}/book`, { 
+                    method: "POST", 
+                    headers: { "Content-Type": "application/json" }, 
+                    body: JSON.stringify(data) 
+                });
+                if (res.ok) { 
+                    fireConfetti(); 
+                    setTimeout(() => { tg.close(); }, 2000); 
+                } else { 
+                    const err = await res.json();
+                    tg.showAlert(err.error || "Ошибка записи"); 
+                }
+            } catch(e) { tg.showAlert("Ошибка связи с сервером"); }
+            finally {
+                btn.disabled = false;
+                btn.innerText = "ПОДТВЕРДИТЬ";
+            }
         }
 
         document.getElementById('tab-client').onclick = () => {
