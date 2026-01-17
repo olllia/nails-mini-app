@@ -6,14 +6,14 @@
     <title>NNAILLSS | Premium</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #ffffff; 
-            --accent: #ff85a1;  
-            --bg-dark: #3b000d; 
-            --glass: rgba(255, 255, 255, 0.07); 
-            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent: #ff4d8d;  
+            --bg-dark: #1a0208; 
+            --glass: rgba(255, 255, 255, 0.05); 
+            --glass-border: rgba(255, 255, 255, 0.1);
             --text-main: #ffffff;
         }
 
@@ -21,101 +21,122 @@
 
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #2b0008;
+            background: var(--bg-dark);
             min-height: 100vh; 
-            padding: 16px; 
+            padding: 20px; 
             color: var(--text-main);
             overflow-x: hidden;
         }
 
-        /* Анимированные фоновые сферы */
         .bg-blobs {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; overflow: hidden; background: #3b000d;
+            z-index: -1; overflow: hidden; background: radial-gradient(circle at top, #3b000d, #1a0208);
         }
         .blob {
-            position: absolute; width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(255, 20, 147, 0.4) 0%, transparent 70%);
-            filter: blur(60px); animation: move 20s infinite alternate;
+            position: absolute; width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(255, 77, 141, 0.12) 0%, transparent 70%);
+            filter: blur(80px); animation: move 25s infinite alternate ease-in-out;
         }
         @keyframes move {
-            from { transform: translate(-20%, -20%); }
-            to { transform: translate(120%, 120%); }
+            from { transform: translate(-30%, -30%); }
+            to { transform: translate(100%, 80%); }
         }
 
-        .glass-card { 
-            background: var(--glass); 
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px; 
-            padding: 20px; 
-            margin-bottom: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .header { text-align: center; margin: 20px 0 30px; }
+        /* Header */
+        .header { text-align: center; margin: 20px 0 35px; }
         .logo { 
-            font-size: 42px; font-weight: 800; letter-spacing: 8px; 
-            background: linear-gradient(to bottom, #fff, #ffb3c1);
+            font-size: 44px; font-weight: 200; letter-spacing: 12px; 
+            text-transform: uppercase; margin-bottom: 5px;
+            background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.4) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .master { font-size: 12px; font-weight: 600; opacity: 0.6; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
+        .master-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13px; color: var(--accent); text-decoration: none;
+            font-weight: 600; letter-spacing: 1px;
+        }
 
+        /* Tabs */
         .tabs { 
-            display: flex; background: rgba(0,0,0,0.2); padding: 5px; 
-            border-radius: 16px; margin-bottom: 25px; gap: 5px;
+            display: flex; background: rgba(0,0,0,0.4); padding: 4px; 
+            border-radius: 20px; margin-bottom: 25px; border: 1px solid var(--glass-border);
         }
         .tab { 
-            flex: 1; padding: 12px; text-align: center; font-weight: 700; font-size: 12px; 
+            flex: 1; padding: 12px; text-align: center; font-weight: 700; font-size: 11px; 
             text-transform: uppercase; color: rgba(255,255,255,0.4); cursor: pointer; 
-            border-radius: 12px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border-radius: 16px; transition: 0.3s ease; 
         }
-        .tab.active { background: #fff; color: #3b000d; }
+        .tab.active { background: var(--accent); color: #fff; box-shadow: 0 4px 15px rgba(255, 77, 141, 0.3); }
 
-        .section-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); margin: 0 0 12px 10px; }
+        /* Sections */
+        .section-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.3); margin: 0 0 12px 12px; }
+        .glass-card { 
+            background: var(--glass); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px; padding: 20px; margin-bottom: 20px;
+        }
 
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        /* Services with Square Checkboxes */
+        .srv-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 16px 10px; border-radius: 18px; transition: 0.2s; cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .srv-item:last-child { border-bottom: none; }
+        .srv-info b { font-size: 15px; font-weight: 600; display: block; }
+        .srv-info span { font-size: 13px; color: var(--accent); opacity: 0.8; }
+        
+        .srv-check { 
+            width: 22px; height: 22px; border: 2px solid rgba(255,255,255,0.15); 
+            border-radius: 8px; transition: 0.3s; background: rgba(0,0,0,0.2);
+        }
+        .srv-item.active { background: rgba(255,255,255,0.03); }
+        .srv-item.active .srv-check { 
+            background: var(--accent); border-color: var(--accent); 
+            box-shadow: 0 0 12px rgba(255, 77, 141, 0.4);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+            background-size: 14px; background-repeat: no-repeat; background-position: center;
+        }
+
+        /* Calendar & Slots */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
         .cal-day { 
             aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
             font-size: 14px; font-weight: 600; border-radius: 12px; transition: 0.2s; 
-            background: rgba(255,255,255,0.05); color: #fff;
+            background: rgba(255,255,255,0.03);
         }
-        .cal-day.active { background: #fff !important; color: #3b000d !important; font-weight: 800; }
+        .cal-day.active { background: #fff !important; color: #000 !important; font-weight: 800; }
         .cal-day.has-slots { border-bottom: 2px solid var(--accent); }
 
         .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .slot-btn { 
             padding: 14px; background: rgba(255,255,255,0.05); border-radius: 14px; 
-            text-align: center; font-weight: 700; font-size: 13px; color: #fff;
-            border: 1px solid transparent; transition: 0.2s;
+            text-align: center; font-weight: 700; font-size: 13px; border: 1px solid transparent; transition: 0.2s;
         }
-        .slot-btn.selected { background: var(--accent); border-color: #fff; }
+        .slot-btn.selected { background: var(--accent); box-shadow: 0 5px 15px rgba(255, 77, 141, 0.3); }
 
-        .srv-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .srv-info b { font-size: 15px; font-weight: 700; color: #fff; }
-        .srv-info span { font-size: 13px; opacity: 0.6; }
-        .srv-check { width: 22px; height: 22px; border: 2px solid rgba(255,255,255,0.2); border-radius: 7px; transition: 0.2s; }
-        .srv-item.active .srv-check { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
-
+        /* Keyboard-friendly Input */
         textarea { 
-            width: 100%; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.1); 
-            padding: 12px; border-radius: 14px; color: #fff; font-family: inherit; transition: 0.3s;
+            width: 100%; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); 
+            padding: 14px; border-radius: 18px; color: #fff; font-family: inherit; font-size: 14px; resize: none;
+            -webkit-appearance: none;
         }
-        textarea:focus { border-color: var(--accent); background: rgba(0,0,0,0.2); }
+        textarea:focus { outline: none; border-color: var(--accent); }
 
         .btn-main { 
-            width: 100%; padding: 20px; background: #fff; color: #3b000d; 
-            border: none; border-radius: 18px; font-weight: 800; font-size: 15px; 
-            margin-top: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%; padding: 20px; background: #fff; color: #000; 
+            border: none; border-radius: 22px; font-weight: 800; font-size: 15px; 
+            letter-spacing: 1px; transition: 0.2s;
         }
+        .btn-main:active { transform: scale(0.96); opacity: 0.9; }
 
         .total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .total-row span:first-child { font-weight: 800; font-size: 10px; letter-spacing: 1px; opacity: 0.5; }
-        .total-row span:last-child { font-weight: 800; font-size: 24px; }
+        .total-label { font-size: 10px; font-weight: 800; opacity: 0.4; letter-spacing: 1px; }
+        .total-price { font-size: 28px; font-weight: 800; }
     </style>
 </head>
-<body>
+<body onclick="if(event.target.tagName !== 'TEXTAREA') document.activeElement.blur()">
     <div class="bg-blobs">
         <div class="blob" style="top: -10%; left: -10%;"></div>
         <div class="blob" style="bottom: -10%; right: -10%; animation-delay: -5s;"></div>
@@ -123,7 +144,7 @@
 
     <div class="header">
         <div class="logo">NNAILLSS</div>
-        <div class="master">premium master: @nnstmlll</div>
+        <a href="https://t.me/nnstmlll" target="_blank" class="master-link">@nnstmlll • мастер Настя</a>
     </div>
 
     <div class="tabs">
@@ -132,51 +153,50 @@
     </div>
 
     <div id="panel-client">
-        <div class="section-title">Дата визита</div>
+        <div class="section-title">Выберите дату</div>
         <div class="glass-card">
-            <div id="cliMonth" style="text-align: center; font-weight: 800; margin-bottom: 15px; letter-spacing: 1px; font-size: 16px;"></div>
+            <div id="cliMonth" style="text-align: center; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;"></div>
             <div class="calendar-grid" id="cliGrid"></div>
         </div>
 
-        <div class="section-title">Свободные окошки</div>
+        <div class="section-title">Свободное время</div>
         <div id="cliSlots" class="slots-grid" style="margin-bottom: 20px;">
-            <div style="grid-column: 1/4; text-align: center; padding: 20px; opacity: 0.3; font-size: 13px;">Выберите дату в календаре</div>
+            <div style="grid-column: 1/4; text-align: center; opacity: 0.3; font-size: 12px; padding: 10px;">Выберите дату в календаре</div>
         </div>
 
         <div class="section-title">Ваши услуги</div>
-        <div class="glass-card" id="srvList" style="padding-top: 5px; padding-bottom: 5px;"></div>
+        <div class="glass-card" id="srvList" style="padding: 10px;"></div>
 
         <div class="section-title">Особые пожелания</div>
-        <div class="glass-card"><textarea id="cliComment" placeholder="Например: хочу дизайн с камнями..." rows="2"></textarea></div>
+        <div class="glass-card" style="padding: 15px;">
+            <textarea id="cliComment" placeholder="Напишите здесь..." rows="2" onkeydown="if(event.key==='Enter') this.blur()"></textarea>
+        </div>
 
-        <div class="glass-card" style="margin-bottom: 40px;">
+        <div class="glass-card" style="margin-bottom: 40px; background: rgba(255,255,255,0.08);">
             <div class="total-row">
-                <span>ИТОГОВАЯ СТОИМОСТЬ</span>
-                <span><span id="total">0</span> ₽</span>
+                <span class="total-label">К ОПЛАТЕ</span>
+                <span class="total-price"><span id="total">0</span> ₽</span>
             </div>
-            <button class="btn-main" onclick="submitBooking()">ПОДТВЕРДИТЬ ЗАПИСЬ</button>
+            <button class="btn-main" onclick="submitBooking()">ПОДТВЕРДИТЬ</button>
         </div>
     </div>
 
     <div id="panel-admin" style="display:none;">
-        <div class="section-title">Рабочий график</div>
+        <div class="section-title">Настройка графика</div>
         <div class="glass-card">
             <div id="admMonth" style="text-align: center; font-weight: 800; margin-bottom: 15px; text-transform: uppercase;"></div>
             <div class="calendar-grid" id="admGrid"></div>
         </div>
-        <div id="dayDetails" style="display:none;">
-            <div class="section-title" id="selectedDateTitle">События</div>
+        <div id="dayDetails" style="display:none;" class="glass-card">
+            <div class="section-title" id="selectedDateTitle" style="margin-left:0">События</div>
             <div id="dayContent"></div>
         </div>
     </div>
 
     <script>
-        // ... (весь JS-код остается без изменений, так как ID элементов сохранены) ...
-        // Копируй функции init(), loadData(), renderCalendar() и т.д. из своего прошлого кода
-        
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.setHeaderColor('#3b000d');
+        tg.setHeaderColor('#1a0208');
 
         const API = "https://nails-backend-5knq.onrender.com";
         const ADMIN_ID = 381232429;
@@ -186,7 +206,7 @@
         const TIME_PRESETS = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
 
         function fireConfetti() {
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ffffff', '#ff85a1', '#3b000d'] });
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ffffff', '#ff4d8d'] });
         }
 
         async function init() {
@@ -235,7 +255,7 @@
             const cont = document.getElementById('cliSlots');
             cont.innerHTML = "";
             const filtered = state.allSlots.filter(s => s.date === date && s.booked === 0);
-            if(!filtered.length) { cont.innerHTML = "<div style='grid-column:1/4;text-align:center;opacity:0.3;font-size:13px;'>На этот день нет свободных мест</div>"; return; }
+            if(!filtered.length) { cont.innerHTML = "<div style='grid-column:1/4;text-align:center;opacity:0.3;font-size:13px;'>Нет свободных мест</div>"; return; }
             filtered.forEach(s => {
                 const b = document.createElement('div');
                 b.className = 'slot-btn'; b.innerText = s.time;
@@ -250,25 +270,34 @@
         async function showAdminDay(dateStr) {
             const cont = document.getElementById('dayContent');
             document.getElementById('dayDetails').style.display = 'block';
-            document.getElementById('selectedDateTitle').innerText = `Записи на ${dateStr}`;
+            document.getElementById('selectedDateTitle').innerText = `Смена: ${dateStr}`;
             cont.innerHTML = "";
+            
+            // Список уже записанных клиентов
             const dayApps = state.allApps.filter(a => a.date === dateStr);
             dayApps.forEach(a => {
                 const d = document.createElement('div');
-                d.className = 'glass-card'; d.style.padding = "15px";
-                d.innerHTML = `<div style="display:flex;justify-content:space-between"><b>${a.time}</b> <span>${a.user_name}</span></div><div style="font-size:11px;opacity:0.6;margin-top:5px;">${a.services}</div>`;
+                d.style.cssText = "background:rgba(255,255,255,0.05); padding:12px; border-radius:12px; margin-bottom:10px; border-left:3px solid var(--accent)";
+                d.innerHTML = `<div style="display:flex;justify-content:space-between"><b>${a.time}</b> <span>${a.user_name}</span></div><div style="font-size:11px;opacity:0.6">${a.services}</div>`;
                 cont.appendChild(d);
             });
+
+            // Сетка для добавления/удаления рабочих часов
             const grid = document.createElement('div');
             grid.className = "slots-grid";
+            grid.style.marginTop = "15px";
             TIME_PRESETS.forEach(time => {
                 const exists = state.allSlots.find(x => x.date === dateStr && x.time === time);
                 const b = document.createElement('div');
                 b.className = `slot-btn ${exists ? 'selected' : ''}`;
                 b.innerText = time;
                 b.onclick = async () => {
-                    if(exists) await fetch(`${API}/slots/${exists.id}`, {method:'DELETE'});
-                    else await fetch(`${API}/slots/bulk`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slots:[{date:dateStr, time:time}]}) });
+                    if(exists) {
+                        if(exists.booked) return tg.showAlert("Нельзя удалить слот с записью!");
+                        await fetch(`${API}/slots/${exists.id}`, {method:'DELETE'});
+                    } else {
+                        await fetch(`${API}/slots/bulk`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slots:[{date:dateStr, time:time}]}) });
+                    }
                     await loadData(); showAdminDay(dateStr); renderCalendar('adm');
                 };
                 grid.appendChild(b);
@@ -296,8 +325,8 @@
         }
 
         async function submitBooking() {
-            if (!selSlot) return tg.showAlert("Пожалуйста, выберите время для записи");
-            if (selServices.length === 0) return tg.showAlert("Выберите хотя бы одну услугу");
+            if (!selSlot) return tg.showAlert("Выберите время записи");
+            if (selServices.length === 0) return tg.showAlert("Выберите услугу");
             
             const data = {
                 slotId: selSlot,
@@ -310,9 +339,9 @@
             };
             try {
                 const res = await fetch(`${API}/book`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-                if (res.ok) { fireConfetti(); setTimeout(() => { tg.showAlert("Вы успешно записаны! Ждем вас ✨"); tg.close(); }, 1500); }
-                else { tg.showAlert("Это время уже занято, выберите другое"); loadData(); renderCalendar('cli'); }
-            } catch(e) { tg.showAlert("Ошибка связи с сервером"); }
+                if (res.ok) { fireConfetti(); setTimeout(() => { tg.close(); }, 2000); }
+                else { tg.showAlert("Ошибка!"); loadData(); renderCalendar('cli'); }
+            } catch(e) { tg.showAlert("Сервер недоступен"); }
         }
 
         document.getElementById('tab-client').onclick = () => {
